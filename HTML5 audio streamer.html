@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+<script src="jquery-3.3.1.js"></script>
+
+</head>
+
+<body>
+
+<h1>HTML5 'as it loads' audio streamer</h1>
+
+<style>
+h1 {
+    display: block;
+    font-size: 2em;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0.36em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-weight: bold;
+}
+</style>
+
+<input type="text" size="105" id="txtBx"/>      
+<button onclick="onLoad()">Stream audio</button>
+
+
+<script>
+function onLoad() {
+
+
+asrc = document.getElementById('txtBx').value;
+alert(asrc);
+
+    try {
+        /* Setup an AudioContext. */
+        context = new AudioContext();
+    } catch (e) {
+        throw new Error('The Web Audio API is unavailable');
+    }
+    
+var audio = new Audio();
+
+
+ source = context.createMediaElementSource(audio);
+ 
+audio.crossOrigin = "anonymous"
+
+ source.connect(context.destination);
+
+ audio.src = asrc;
+
+$("#ad").attr("src", audio.src);
+
+
+}
+
+</script>
+
+
+<br>
+<button onclick="setMinusNoughtPointNoughtOne()" type="button" accesskey="[">-0.01x</button> 
+<button onclick="resetRate()" type="button" >1x</button>
+<button onclick="setPlusNoughtPointNoughtOne()" type="button" accesskey="]">+0.01x</button><br>
+<span>Playback rate: 1.00</span><br>
+<audio id="ad" controls></audio>
+
+<style>
+audio {
+    width: 720px;
+}
+</style>
+
+<script>
+
+function setPlusNoughtPointNoughtOne() {
+ad.playbackRate = ad.playbackRate + 0.01;
+$("span").html("Playback rate: " + ad.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}));
+}
+
+function resetRate() {
+ad.playbackRate = 1;
+$("span").html("Playback rate: " + ad.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}));
+}
+
+
+function setMinusNoughtPointNoughtOne() {
+ad.playbackRate = ad.playbackRate - 0.01;
+$("span").html("Playback rate: " + ad.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}));
+}
+</script>
+
+</body>
+
+</html>
