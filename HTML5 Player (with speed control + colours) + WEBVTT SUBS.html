@@ -1,0 +1,1158 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+<meta charset="utf-8">
+<script src="jquery-3.3.1.js"></script>
+  
+    <script src="balancetext.min.js"></script>
+
+  <style id="subsCSS" type = "text/css">
+  ::cue {
+    background-color: transparent;
+    color: #ffff00;
+    font-size: 192%;
+    font-weight: bold;
+    text-shadow: 1px 4px black, 6px 2px black, -7px -1px black, 7px 4px black;
+    font-family: Segoe UI;
+}
+
+::-webkit-media-text-track-display {
+    transform: translate(0%, -94%) scale(0.9,1);
+    -webkit-transform: translate(0%, -94%) scale(0.9,1);
+}
+  </style>
+  
+  
+<script>
+
+
+var subsCSS=document.getElementById("subsCSS");
+
+
+let s = {
+	track: 0,
+	origTrack: 0,
+	vtt: 0,
+	d: 0,
+	delIndicator: 0,
+	blcd: 0
+};
+
+
+s.vtt = "WEBVTT\n\n00:00:00.000 --> 9999:59:59.999\n"
+
+function vttURL(t)
+{
+	let textFileAsBlob = new Blob([t],
+	{
+		type: 'text/vtt'
+	});
+	return window.URL.createObjectURL(textFileAsBlob);
+}
+
+
+function removeEls(d, array)
+{
+	var newArray = [];
+	for (let i = 0; i < array.length; i++)
+	{
+		if (array[i] != d)
+		{
+			newArray.push(array[i]);
+		}
+	}
+	return newArray;
+}
+
+
+
+function sub() {
+ac();
+videosub_main();
+vid.play();
+}
+
+
+function deac() {
+subti.dom.style.border = "4px solid rgba(222, 0, 0, 1)";
+subti.dom.readOnly=false;
+subti.dom.onclick="";
+}
+
+function ac() {
+subti.dom.style.border = "4px solid rgba(0, 222, 0, 1)";
+subti.dom.readOnly=true;
+subti.dom.onclick=function () {
+   this.select();
+};
+
+}
+
+function deact() {
+deac();
+rem();
+}
+
+
+function videosub_main() {
+var vid = document.getElementById('video');
+
+let t=document.getElementsByTagName('TRACK');
+for (let i=0; i<t.length; i++){
+t[i].remove();
+}
+
+
+
+if (subti.dom.value !== "")
+{
+
+s.track = document.createElement('track');
+vid.appendChild(s.track);
+console.log(s.track);
+	s.vtt = 'WEBVTT\n\n' + subti.dom.value;  //txt4.value
+					vid.play();
+						
+						subsCSS = document.createElement("style");
+
+
+									s.track.id = "subs1";
+					s.vtt = colour_subs(s.vtt);
+					s.vtt = srtVttTiming(s.vtt);
+					
+						s.track.src = vttURL(s.vtt);
+					s.track.track.mode = "showing";
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + " ms.");
+					
+					s.track.addEventListener("cuechange", function()
+					{
+
+						if (s.origTrack == 0)
+						{
+							balanceSubs();
+
+							var stTm = [];
+							var edTm = [];
+							var tTxt = [];
+
+							for (let m = 0; m < s.track.track.cues.length; m++)
+							{
+								stTm[m] = s.track.track.cues[m].startTime;
+								edTm[m] = s.track.track.cues[m].endTime;
+								tTxt[m] = s.track.track.cues[m].text;
+							}
+
+							s.origTrack = {
+								"start": stTm,
+								"end": edTm,
+								"text": tTxt
+							};
+							$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + "0 ms.");
+							console.log("Reference track created!\nYou can set the subtitles' delay now!");
+						}
+					}, false)
+					}
+					}
+
+function rem(){
+s.origTrack = 0;
+
+			let tracks = document.getElementsByTagName('TRACK');
+				for (let i = 0; i < tracks.length; i++)
+				{
+					if (tracks[i].src = s.track.src)
+					{
+						tracks[i].remove();
+					}
+				}
+				
+				s.track = 0;
+				
+				$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " +  "0ms.");
+				
+				s.d = 0;
+				s.blcd = 0;
+				
+}
+
+
+	function subsDelay(track, origTrack, d, v, elm, bgElm)
+	{
+
+		function do_del()
+		{
+
+
+			track.mode = "hidden";
+
+			for (let i = 0; i < track.track.cues.length; i++)
+			{
+				if (origTrack.start[i] * 1 + d / 1000 < 0)
+				{
+					track.track.cues[i].startTime = 0;
+					track.track.cues[i].endTime = 0;
+					track.track.cues[i].text = '';
+				}
+				else
+				{
+					track.track.cues[i].startTime = origTrack.start[i] * 1 + d / 1000;
+					track.track.cues[i].endTime = origTrack.end[i] * 1 + d / 1000;
+					track.track.cues[i].text = origTrack.text[i];
+				}
+			}
+
+			for (let k = 0; k < track.track.cues.length - 1; k++)
+			{
+				if(k==0)
+				{
+				if(v.currentTime < track.track.cues[k].startTime)
+				{
+					console.log('"' + track.track.cues[k].text + '" ' + 'will start ' + ((track.track.cues[k].startTime-v.currentTime) * 1000).toLocaleString('en-GB',
+					{
+						useGrouping: false,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: 7
+					}) + ' ms from now');
+					k = track.track.cues.length - 2;
+				}
+					
+				}else{
+					
+				if ((v.currentTime > track.track.cues[k].startTime) && (v.currentTime < track.track.cues[k + 1].startTime))
+				{
+					console.log(d + ' ms delay: \n\n' + '"' + track.track.cues[k].text + '" ' + 'started ' + ((v.currentTime - track.track.cues[k].startTime) * 1000).toLocaleString('en-GB',
+					{
+						useGrouping: false,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: 7
+					}) + ' ms ago' + '\n\n' + '"' + track.track.cues[k + 1].text + '" ' + 'will start ' + ((track.track.cues[k + 1].startTime - v.currentTime) * 1000).toLocaleString('en-GB',
+					{
+						useGrouping: false,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: 7
+					}) + ' ms from now');
+					k = track.track.cues.length - 2;
+				}
+
+				if ((v.currentTime == track.track.cues[k].startTime) && (v.currentTime < track.track.cues[k + 1].startTime))
+				{
+					console.log('"' + track.track.cues[k].text + '" ' + 'started now' + '\n\n' + '"' + track.track.cues[k + 1].text + '" ' + 'will start ' + ((track.track.cues[k + 1].startTime - v.currentTime) * 1000).toLocaleString('en-GB',
+					{
+						useGrouping: false,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: 7
+					}) + ' ms from now');
+					k = track.track.cues.length - 2;
+				}
+
+				if ((v.currentTime > track.track.cues[k].startTime) && (v.currentTime > track.track.cues[k + 1].startTime) && (track.track.cues[k + 2] == undefined))
+				{
+					console.log('"' + track.track.cues[k + 1].text + '" ' + 'started ' + ((v.currentTime - track.track.cues[k + 1].startTime) * 1000).toLocaleString('en-GB',
+					{
+						useGrouping: false,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: 7
+					}) + ' ms ago');
+					k = track.track.cues.length - 2;
+				}
+			}
+			}
+
+			track.mode = "showing";
+			s.delIndicator.textContent = d + ' ms';
+
+		}
+
+		if (!v.paused)
+		{
+			v.pause();
+			do_del();
+			v.play();
+		}
+		else
+		{
+
+			do_del();
+		}
+
+	}
+
+	function balanceSubs()
+	{
+		if (s.blcd !== 1)
+		{
+			s.track.track.mode = "hidden";
+			for (let i = 0; i < s.track.track.cues.length; i++)
+			{
+				var subtitleCurr = s.track.track.cues[i].text.split('\n');
+				subtitleCurr.forEach(function(index)
+				{
+					var tmpBalDiv = document.createElement('div');
+					tmpBalDiv.style.display = 'none';
+					tmpBalDiv.className = 'balance-text';
+					tmpBalDiv.innerHTML = subtitleCurr[index];
+					balanceText.updateWatched();
+					subtitleCurr[index] = tmpBalDiv.innerHTML;
+					tmpBalDiv.remove();
+				});
+				s.track.track.cues[i].text = subtitleCurr.join('\n');
+			}
+			s.track.track.mode = "showing";
+			s.blcd = 1;
+
+		}
+
+	}
+
+
+		function colour_subs(str)
+		{
+				var subsCSS=document.getElementById("subsCSS");
+			let colStyls = [];
+			var op = str.match(/<([\\n]|\s)*font((\\n)*\s{1}|\s{1}|\s{1}(\\n)*|(\\n)*\s{1}(\\n)*)*color([\\n]|\s)*=([\\n]|\s)*[^>]+>/g);
+			if (op !== null)
+			{
+				var cl = str.match(/<([\\n]|\s)*\/([\\n]|\s)*font{1}([\\n]|\s)*>/g);
+				var cols = [];
+				
+				for (let i = 0; i < op.length; i++)
+				{
+					cols.push(op[i].match(/={1}[^>]+/g)[0].split(' ').join('').split('\n').join('').split('=').join('').split('"').join(''));
+					str = str.split(op[i]).join('<c.col_' + cols[i].split('#').join('') + '>');
+					
+					colStyls.push(' ::cue(c.col_' + cols[i].split('#').join('') + '){color: ' + cols[i] + ';}')
+
+				}
+				let finalColStyls = Array.from(new Set(colStyls));
+
+				for (let k = 0; k < finalColStyls.length; k++)
+				{
+					subsCSS.innerHTML += finalColStyls[k];
+				}
+
+				for (let i = 0; i < cl.length; i++)
+				{
+					str = str.split(cl[i]).join('</c>');
+				}
+			}
+			return str;
+		}
+
+		function srtVttTiming(srt)
+		{
+
+			var tm = srt.match(/\d+\n{1}\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}/g);
+			var nTm = [];
+			for (let i = 0; i < tm.length; i++)
+			{
+				nTm.push(tm[i].split('\n')[1].split(',').join('.'));
+				srt = srt.split(tm[i]).join(nTm[i]);
+			}
+
+			return srt;
+		}
+
+
+</script>
+
+
+
+  <style type="text/css">
+    video,
+input {
+  display: block;
+}
+
+input {
+  width: 100%;
+}
+/*
+.info {
+  background-color: aqua;
+}
+
+.error {
+  background-color: red;
+  color: white;
+}
+*/
+  </style>
+
+
+
+<style type="text/css">
+
+* { box-sizing:border-box; }
+
+body { display:box; box-orient:horizontal; background:#333; }
+aside { width:360px; }
+aside div { 
+  padding:10px; 
+  border-bottom:1px solid #888; 
+  border-top:1px solid #bbb;
+  transition:background 0.3s ease;
+  background:#aaa;
+}
+aside input#colMat {
+    margin: -18px 0px 1px 46px;
+}
+aside div:first-child {
+    padding-top: 15px;
+}
+
+aside div:hover { background:#bbb; }
+aside div#clrMtrx {
+    max-width: 247px;
+    border-bottom: initial;
+}
+
+aside div#clrMtrx div {
+    width: 39px;
+    -webkit-appearance: textfield;
+    background-color: white;
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+    padding: 1px;
+    border-width: 2px;
+    border-style: inset;
+    border-color: initial;
+    border-image: initial;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    margin: 0em;
+    font: 400 13.3333px Arial;
+    -webkit-writing-mode: horizontal-tb !important;
+}
+label { display:block; font:13px "Helvetica", sans-serif; color:#222; }
+strong { font-weight:bold; padding:0 3px; user-select:none; }
+code { display:inline-block; font:12px "Courier new"; float:right; color:#444; }
+
+input { appearance:none!important; background:#777;  width:100%; border-radius:3px; height:20px; }
+input::-webkit-slider-thumb {
+  appearance:none!important; width:32px; height:20px;  background:#111; border-radius:3px;
+}
+
+section { box-flex:1; padding:20px; background:#333; }
+
+
+video { width:90%; height:auto; background:#000; }
+
+</style>
+
+  <title>HTML5 local video file player + subs</title>
+
+  
+    
+
+
+
+
+<script type='text/javascript'>
+window.onload=function(){
+(function localFileVideoPlayerInit(win) {
+  var URL = win.URL || win.webkitURL,
+ inputNode = document.getElementById('selVid');
+    playSelectedFile = function playSelectedFileInit(event) {
+	
+
+      var file = this.files[0];
+
+      var type = file.type;
+
+      var vid = document.getElementById('video');
+
+
+      var fileURL = URL.createObjectURL(file);
+	if(vid.src!==""){
+		deact();
+		   vid.src = fileURL;
+	}else{
+	rem();
+	 actLd();
+	}
+	
+	
+	function actLd(){
+      vid.src = fileURL;
+	  if(subti.dom.value !==""){
+	  sub();
+	  }
+}
+    },
+   
+
+  inputNode.addEventListener('change', playSelectedFile, false);
+  
+  
+document.getElementById("openFile").addEventListener('change',  function () {
+ var fr = new FileReader();
+ fr.onload = function () {
+	subti.dom.value = this.result;
+rem();
+
+if (vid.src!==""){
+sub();
+}
+
+}
+
+fr.readAsText(this.files[0]);
+
+
+})
+  
+  
+  
+  
+}(window));
+
+}//]]> 
+
+</script>
+  
+</head>
+
+<body>
+
+<h1>HTML5 local video file player</h1>
+<!-- <div id="message"></div> -->
+
+
+
+<input id="selVid" type="file" accept="video/*"/>
+
+<textarea id="txt4"></textarea>
+    
+    <div class="file">
+  <label for="file-input">Select subs</label>
+  <input type="file" accept=".srt" id="openFile">
+<button id="Sgo" onclick="sub()">Activate subs</button>
+<button id="Scl" onclick="deact()">Deactivate subs</button>
+</div> 
+
+
+
+
+<style>
+
+h1 {
+    color: #ececec;
+}
+
+
+.file {
+  position: relative;
+  height: 30px;
+  width: 100px;
+}
+
+.file > input[type="file"] {
+  position: absoulte;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0
+}
+
+.file > label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: #666;
+  color: #fff;
+  border-radius: 5px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer
+}
+
+</style>
+
+
+
+
+
+<button onclick="PlayPause()" type="button" accesskey="b">Play/Pause (b)</button>
+<button onclick="Backwards()" type="button" accesskey="i">Rewind (i)</button>
+<button onclick="Forwards()" type="button" accesskey="o">Fast forward (o)</button><br>
+
+<button onclick="setPlusNoughtPointOne()" type="button" accesskey="]">+0.1x</button>
+<button onclick="setMinusNoughtPointOne()" type="button" accesskey="[">-0.1x</button>
+<button onclick="setPlaySpeedOne()" type="button" accesskey="1">Reset playback rate</button>
+<button onclick="setPlaySpeedUp()" type="button">+0.25x</button>
+<button onclick="setPlaySpeedDown()" type="button">-0.25x</button>
+
+ 
+
+
+
+<style>
+
+textarea#txt4 {
+    height: 112px;
+    margin: 1px 742px;
+    position: absolute;
+    min-width: 418px;
+}
+
+
+button#Sgo{
+    margin-left: 656px;
+    margin-top: 57px;
+    position: absolute;
+    background-color: rgba(0, 222, 0, 1);
+    -webkit-text-fill-color: #121212;
+    width: 79px;
+}
+
+button#Scl {
+    margin-top: 15px;
+    position: absolute;
+    margin-left: 656px;
+    background-color: rgba(222, 0, 0, 1);
+    -webkit-text-fill-color: #ececec;
+}
+
+</style>
+
+
+<br>
+<button onclick="swtch()" type="button" accesskey="\">Switch (\)</button>
+<button onclick="setPlaySpeedOneFive()" type="button">1.5x</button>
+<button onclick="setPlaySpeedTwo()" type="button" accesskey="2">2x</button>
+<button onclick="setPlaySpeedThree()" type="button" accesskey="3">3x</button>
+<button onclick="setPlaySpeedFour()" type="button" accesskey="4">4x</button>
+<button onclick="setPlaySpeedFive()" type="button" accesskey="5">5x</button>
+<button onclick="setPlaySpeedSix()" type="button" accesskey="6">6x</button>
+<button onclick="setPlaySpeedSeven()" type="button" accesskey="7">7x</button>
+<button onclick="setPlaySpeedEight()" type="button" accesskey="8">8x</button>
+<br>
+
+<button onclick="subsyncminusfive()" type="button">-5s</button>
+<button onclick="subsyncminusone()" type="button">-1s</button>
+<button onclick="subsyncminusnoughtfive()" type="button">-500ms</button>
+<button onclick="subsyncminusnoughtone()" type="button">-100ms</button>
+<button onclick="subsyncminusnoughtnoughtone()" accesskey="," type="button">-10ms</button>
+<button onclick="subsynczero()" type="button">Reset subs sync</button>
+<button onclick="subsyncplusnoughtnoughtone()" accesskey="." type="button">+10ms</button>
+<button onclick="subsyncplussnoughtone()" type="button">+100ms</button>
+<button onclick="subsyncplusnoughtfive()" type="button">+500ms</button>
+<button onclick="subsyncplussone()" type="button">+1s</button>
+<button onclick="subsyncplusfive()" type="button">+5s</button>
+
+<p id="vidStat">Playback rate: 1.00, Subtitles delay: 0ms.</p>
+
+<style>
+p#vidStat {
+    color: #dfdfdf;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+}
+</style>
+
+
+
+
+<video id="video" width="1280" height="720"  onClick="PlayPause();" ondblclick="Fullscreen()" controls autoplay>
+	<!-- <div id="filter-sample_div" style="display: none;"><svg><filter id="filter-sample"><feColorMatrix type="matrix" values="1 0 0 0  0 -0.11 1.18 -0.07 0  0  0 0 1 0  0 0 0 0 1  0"></feColorMatrix></filter></svg></div> -->
+</video><br>
+
+
+
+	<script>
+var vid = document.getElementById("video");
+
+
+
+function Fullscreen(){
+  if (vid.webkitDisplayingFullscreen) {
+    vid.webkitExitFullscreen();
+	}
+else{
+vid.webkitRequestFullScreen();
+}
+}
+
+	function subsDelay(track, origTrack, d, v)
+	{
+
+		function do_del()
+		{
+
+			track.mode = "hidden";
+
+			for (let i = 0; i < track.track.cues.length; i++)
+			{
+				if (origTrack.start[i] * 1 + d / 1000 < 0)
+				{
+					track.track.cues[i].startTime = 0;
+					track.track.cues[i].endTime = 0;
+					track.track.cues[i].text = '';
+				}
+				else
+				{
+					track.track.cues[i].startTime = origTrack.start[i] * 1 + d / 1000;
+					track.track.cues[i].endTime = origTrack.end[i] * 1 + d / 1000;
+					track.track.cues[i].text = origTrack.text[i];
+				}
+			}
+
+			for (let k = 0; k < track.track.cues.length - 1; k++)
+			{
+				if ((v.currentTime > track.track.cues[k].startTime) && (v.currentTime < track.track.cues[k + 1].startTime))
+				{
+					console.log(d + ' ms delay: \n\n' + '"' + track.track.cues[k].text + '" ' + 'started ' + ((v.currentTime - track.track.cues[k].startTime) * 1000).toLocaleString('en-GB',
+					{
+						useGrouping: false,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: 7
+					}) + ' ms ago' + '\n\n' + '"' + track.track.cues[k + 1].text + '" ' + 'will start ' + ((track.track.cues[k + 1].startTime - v.currentTime) * 1000).toLocaleString('en-GB',
+					{
+						useGrouping: false,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: 7
+					}) + ' ms from now');
+					k = track.track.cues.length - 2;
+				}
+
+				if ((v.currentTime == track.track.cues[k].startTime) && (v.currentTime < track.track.cues[k + 1].startTime))
+				{
+					console.log('"' + track.track.cues[k].text + '" ' + 'started now' + '\n\n' + '"' + track.track.cues[k + 1].text + '" ' + 'will start ' + ((track.track.cues[k + 1].startTime - v.currentTime) * 1000).toLocaleString('en-GB',
+					{
+						useGrouping: false,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: 7
+					}) + ' ms from now');
+					k = track.track.cues.length - 2;
+				}
+
+				if ((v.currentTime > track.track.cues[k].startTime) && (v.currentTime > track.track.cues[k + 1].startTime) && (track.track.cues[k + 2] == undefined))
+				{
+					console.log('"' + track.track.cues[k + 1].text + '" ' + 'started ' + ((v.currentTime - track.track.cues[k + 1].startTime) * 1000).toLocaleString('en-GB',
+					{
+						useGrouping: false,
+						minimumFractionDigits: 0,
+						maximumFractionDigits: 7
+					}) + ' ms ago');
+					k = track.track.cues.length - 2;
+				}
+
+			}
+
+			track.mode = "showing";
+$("p#vidStat").html("Playback rate: " + v.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + d+ "ms.");
+
+		}
+
+		if (!v.paused)
+		{
+			v.pause();
+			do_del();
+			v.play();
+		}
+		else
+		{
+
+			do_del();
+		}
+
+	}
+
+
+
+
+function subsyncminusfive(){
+s.d-=5000;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+function subsyncminusone(){
+s.d-=1000;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+function subsyncminusnoughtfive(){
+s.d-=500;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+function subsyncminusnoughtone(){
+s.d-=100;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+
+function subsyncminusnoughtnoughtone(){
+s.d-=10;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+function subsynczero(){
+s.d=0;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+
+function subsyncplusnoughtnoughtone(){
+s.d+=10;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+function subsyncplussnoughtone(){
+s.d+=100;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+function subsyncplusnoughtfive(){
+s.d+=500;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+function subsyncplussone(){
+s.d+=1000;
+subsDelay(s.track, s.origTrack, s.d, vid);
+
+}
+
+function subsyncplusfive(){
+s.d+=5000;
+subsDelay(s.track, s.origTrack, s.d, vid);
+}
+
+
+function setPlusNoughtPointOne() {
+	vid.playbackRate = vid.playbackRate + 0.10;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+}
+
+function setMinusNoughtPointOne() {
+	vid.playbackRate = vid.playbackRate - 0.10;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+}
+
+function setPlaySpeedUp() { 
+    vid.playbackRate = vid.playbackRate + 0.25;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+
+function setPlaySpeedOne() { 
+    vid.playbackRate = 1;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+function setPlaySpeedDown() { 
+    vid.playbackRate = vid.playbackRate - 0.25;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+function PlayPause() { 
+if(vid.paused){
+    vid.play();}
+else{
+vid.pause(); 
+} 
+}
+
+function setPlaySpeedOneFive() { 
+    vid.playbackRate = 1.5;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+}
+
+function setPlaySpeedTwo() { 
+    vid.playbackRate = 2;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+function setPlaySpeedThree() { 
+    vid.playbackRate = 3;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+function setPlaySpeedFour() { 
+    vid.playbackRate = 4;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+function setPlaySpeedFive() { 
+    vid.playbackRate = 5;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+function setPlaySpeedSix() { 
+    vid.playbackRate = 6;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+function setPlaySpeedSeven() { 
+    vid.playbackRate = 7;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+function setPlaySpeedEight() { 
+    vid.playbackRate = 8;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
+var pR1=1;
+function swtch() { 
+    if (vid.playbackRate!=1) {
+			pR1=vid.playbackRate;
+vid.playbackRate=1;
+			  } else{
+				  vid.playbackRate=pR1;
+				pR1=1;
+				}
+				
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+}
+
+
+function Backwards() {
+vid.currentTime = vid.currentTime - 20; 
+}
+
+function Forwards() {
+vid.currentTime = vid.currentTime + 1;
+}
+
+$(vid).mouseenter(function() {
+
+
+        var idleMouseTimer;
+        var forceMouseHide = false;
+
+        $("body").css('cursor', 'none');
+		
+		vid.addEventListener('mousemove', cursorhide, true);
+		
+		  function cursorhide (ev) {
+                if(!forceMouseHide) {
+                        $("body").css('cursor', '');
+
+                        clearTimeout(idleMouseTimer);
+
+                        idleMouseTimer = setTimeout(function() {
+                                $("body").css('cursor', 'none');
+
+                                forceMouseHide = true;
+                                setTimeout(function() {
+                                        forceMouseHide = false;
+                                }, 1);
+                        }, 3000);
+                }
+}
+
+
+
+
+vid.addEventListener('mousewheel', handleMouseWheel, true);
+    function handleMouseWheel(evt) {
+var current = $(window).scrollTop();
+$(window).scroll(function() {
+    $(window).scrollTop(current);
+});   
+
+if(evt.wheelDelta>0){
+   vid.currentTime += ((evt.wheelDelta*vid.duration)/(evt.wheelDelta*1001)); // 
+}
+if (evt.wheelDelta<0){
+	vid.currentTime += (evt.wheelDelta/800)
+}
+    }
+  })
+  .mouseleave(function() {
+    $(window).off('scroll');
+  });
+
+  
+  vid.addEventListener('ratechange', function(){
+  
+  				$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " +s.d+  "ms.");
+  });
+  
+	</script>
+	
+
+<aside>
+<div>
+    <label>
+        <strong>Use custom colour matrix css?</strong>
+    <input type="checkbox" checked="" id="colMat"></label>
+		
+  <div id="clrMtrx">
+<div contenteditable="true" id="colMat1">1</div>
+<div contenteditable="true" id="colMat2">0</div>
+<div contenteditable="true" id="colMat3">0</div>
+<div contenteditable="true" id="colMat4">0</div>
+<div contenteditable="true" id="colMat5">0</div>
+<div contenteditable="true" id="colMat6">-0.11</div>
+<div contenteditable="true" id="colMat7">1.18</div>
+<div contenteditable="true" id="colMat8">-0.07</div>
+<div contenteditable="true" id="colMat9">0</div>
+<div contenteditable="true" id="colMat10">0</div>
+<div contenteditable="true" id="colMat11">0</div>
+<div contenteditable="true" id="colMat12">0</div>
+<div contenteditable="true" id="colMat13">1</div>
+<div contenteditable="true" id="colMat14">0</div>
+<div contenteditable="true" id="colMat15">0</div>
+<div contenteditable="true" id="colMat16">0</div>
+<div contenteditable="true" id="colMat17">0</div>
+<div contenteditable="true" id="colMat18">0</div>
+<div contenteditable="true" id="colMat19">1</div>
+<div contenteditable="true" id="colMat20">0</div>
+</div>
+</div>
+  <div>
+    <label>
+      <strong>Blur</strong><code>-webkit-filter:blur(<span id="blur-val">0</span>px);</code>
+    </label>
+		<input id="blur" type="range" min="0" max="20" step="1" value="0" />
+  </div>
+  <div>
+    <label><strong>Saturation</strong><code>-webkit-filter:saturate(<span id="saturate-val">1</span>);</code></label>
+    <input id="saturate" type="range" min="0" max="5" step="0.001" value="1"/>
+  </div>
+  <div>
+    <label><strong>Hue</strong><code>-webkit-filter:hue-rotate(<span id="hue-val">0</span>deg);</code></label>
+    <input id="hue" type="range" min="0" max="360" step="1" value="0" />
+  </div>
+  <div>
+    <label><strong>Brightness</strong><code>-webkit-filter:brightness(<span id="brightness-val">1</span>);</code></label>
+    <input id="brightness" type="range" min="0" max="1" step="0.001" value="1" />
+  </div>
+  <div>
+    <label><strong>Contrast</strong><code>-webkit-filter:contrast(<span id="contrast-val">1</span>);</code></label>
+    <input id="contrast" type="range" min="0" max="5" step="0.001" value="1" />
+  </div>
+  <div>
+    <label><strong>Invert</strong><code>-webkit-filter:invert(<span id="invert-val">0</span>);</code></label>
+    <input id="invert" type="range" min="0" max="1" step="1" value="0" />
+  </div>
+  <div>
+    <label><strong>Sepia</strong><code>-webkit-filter:sepia(<span id="sepia-val">0</span>);</code></label>
+    <input id="sepia" type="range" min="0" max="1" step="0.05" value="0" />
+  </div>
+</aside>
+
+
+<script>
+
+
+
+var vid = document.getElementById("video");
+    var blur = $('#blur')[0];
+    var saturate = $('#saturate')[0];
+    var hue = $('#hue')[0];
+    var brightness = $('#brightness')[0];
+    var contrast = $('#contrast')[0];
+    var invert = $('#invert')[0];
+    var sepia = $('#sepia')[0];
+	var clrMtxChk=$('input#colMat')[0];
+	var clrMtrx=document.getElementById('clrMtrx');
+	
+
+
+blur.addEventListener('input',updFilters,false);
+saturate.addEventListener('input',updFilters,false);
+hue.addEventListener('input',updFilters,false);
+brightness.addEventListener('input',updFilters,false);
+contrast.addEventListener('input',updFilters,false);
+invert.addEventListener('input',updFilters,false);
+sepia.addEventListener('input',updFilters,false);
+clrMtxChk.addEventListener('change',updFilters,false);
+
+
+var subti = {
+	dom: 0
+};
+
+subti.dom=document.getElementById("txt4");
+
+updFilters();
+
+const observerFilt = new MutationObserver((mutations) =>
+{
+
+//console.log(mutations);
+updFilters();
+
+
+
+});
+
+observerFilt.observe(clrMtrx,
+{
+	characterData: true,
+	attributes: true,
+	characterData:true,
+	subtree:true
+});
+
+
+
+
+function updFilters()
+{
+
+if (document.querySelectorAll('div#filter-sample_div').length==0)
+{
+						var divm = document.createElement('div');
+						}else
+						{
+						
+						document.querySelectorAll('div#filter-sample_div').forEach(function (mtx) {
+mtx.remove();
+});
+					var divm = document.createElement('div');
+						
+						}
+						
+	if(clrMtxChk.checked)
+	{
+	
+
+				divm.innerHTML = "<svg><filter id='filter-sample'><feColorMatrix type='matrix' values='" + clrMtrx.innerText + "'></feColorMatrix></filter></svg>";
+
+				divm.setAttribute('id', 'filter-sample_div');
+				divm.setAttribute('style', 'display: none;');
+	vid.appendChild(divm);
+//	console.log(divm);
+
+	
+    var filters = 'blur(' + blur.value + 'px) saturate(' + saturate.value + ') hue-rotate(' + hue.value + 'deg) brightness(' + brightness.value + ') contrast(' + contrast.value + ') invert(' + invert.value + ') sepia(' + sepia.value + ') url(#filter-sample)';
+	}else
+	{
+	divm.remove();
+	   var filters = 'blur(' + blur.value + 'px) saturate(' + saturate.value + ') hue-rotate(' + hue.value + 'deg) brightness(' + brightness.value + ') contrast(' + contrast.value + ') invert(' + invert.value + ') sepia(' + sepia.value + ')';
+	}
+	
+    $('#video').css('-webkit-filter', filters);
+    $('#blur-val').text(blur.value);
+    $('#saturate-val').text(saturate.value);
+    $('#hue-val').text(hue.value);
+    $('#brightness-val').text(brightness.value);
+    $('#contrast-val').text(contrast.value);
+    $('#invert-val').text(invert.value);
+    $('#sepia-val').text(sepia.value);
+	}
+
+
+</script>
+
+</body>
+
+
+</html>
