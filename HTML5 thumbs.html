@@ -1,0 +1,186 @@
+﻿<html> 
+
+<head>
+<script src="jquery-3.3.1.js"></script>
+</head> 
+
+<body>
+
+<style>
+video{
+	width:90%; 
+	height:auto; 
+	background:#000;
+}
+
+figcaption {
+    color: white;
+    font-size: 10px;
+    display: inline-grid;
+    position: absolute;
+}
+
+figure {
+    display: inline-grid;
+    margin: 0px;
+	}
+</style>
+
+<button onclick="setPlusFrames()" type="button">+ 4 thumbs</button>
+<button onclick="setMinusFrames()" type="button">- 4 thumbs</button>
+<button onclick="clr()" type="button">Clear</button>
+<input type="text" size="105" name="txtBx" id="txtBx">
+
+<input type="button" Value="Load Video" onClick="changeValue();">
+<input type="button" Value="Generate Thumbs" onClick="doThumbs();"><br>
+<span id="frames">20</span>
+
+
+<div style="width:90%; text-align:center;">
+
+
+<video id="video" width="100%" controls>
+    <source id="VdoSrc" src=""  type="video/mp4"></source>
+</video>
+    
+<div id=thumbs></div>
+
+
+<script>
+var t=20;
+
+
+$("#thumbs").ready(function() {
+  $("#thumbs").on("click", "figure", function() {
+    var index = $("figure").index(this);
+	  //console.log($(('#thumbs > figure > canvas')[index]));
+
+video.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
+
+		 $(window).scrollTop(0);
+  });
+});
+
+	function setPlusFrames() {
+	t += 4;
+	  document.getElementById("frames").innerHTML = t;
+	}
+
+	function setMinusFrames() {
+if(t<4){
+t=0;
+}
+else{
+	t -= 4;
+	document.getElementById("frames").innerHTML = t;
+}
+	}
+
+function clr(){
+document.getElementById('txtBx').value=""
+
+}
+
+
+function changeValue()
+{
+    var txtVal = document.getElementById('txtBx').value;
+    alert(txtVal);  
+    var vid = document.getElementById('VdoSrc');
+    vid.src = txtVal;  
+    var myVdo = document.getElementById("video");     
+    myVdo.load(); 
+  myVdo.pause();
+  }
+
+function doThumbs()
+{
+    var txtVal = document.getElementById('txtBx').value;
+    alert(txtVal);  
+    var myVdo = document.getElementById("video");     
+    myVdo.load(); 
+
+var aseek=1;
+var i = 0;
+var ttmp=1;
+
+var video = document.getElementById("video");
+
+var thumbs = document.getElementById("thumbs");
+
+
+ 
+video.addEventListener('loadeddata', function() {
+	thumbs.innerHTML = "";
+    video.currentTime =   (video.duration)/(t+1);
+}, false);
+
+video.addEventListener('seeked', function() {
+
+if(aseek==1){
+
+    generateThumbnail();
+
+    ttmp++;
+i=ttmp*(video.duration/(t+1));
+
+    if (ttmp<=t) {
+
+        video.currentTime = i;
+
+    }
+	else {
+
+aseek=0;
+    return;
+    }
+}
+else{
+return;
+}
+}, false);
+
+
+
+function generateThumbnail() {
+var f = document.createElement("figure");
+var ct=document.createElement("figcaption");
+console.log(f);
+  var c = document.createElement("canvas");
+  var ctx = c.getContext("2d");
+var scl=0.3
+  c.width = video.clientWidth*scl;
+  c.height = video.clientHeight*scl;
+  
+c.setAttribute('timestamp', video.currentTime);
+
+
+  ctx.drawImage(video, 0, 0, c.width, c.height);
+
+
+ thumbs.appendChild(f);
+
+  f.appendChild(c);
+  
+   function formatTime(seconds) {
+    minutes = Math.floor(seconds / 60);
+    minutes = (minutes >= 10) ? minutes : "0" + minutes;
+    seconds = Math.floor(seconds % 60);
+    seconds = (seconds >= 10) ? seconds : "0" + seconds;
+    return minutes + ":" + seconds;
+  }
+  
+  ct.innerHTML=formatTime(c.attributes.timestamp.nodeValue);
+  f.appendChild(ct);
+ 
+  }
+}
+
+
+
+
+</script>
+
+</body> 
+
+</html>
