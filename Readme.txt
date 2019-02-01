@@ -33,6 +33,8 @@ Double clicking the video toggles fullscreen.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CHANGELOG:
+01/02/2019: Fixed subtitle line balancing.
+
 06/01/2019: Created new pages incorporating SRT to WEBVTT conversion and updated the video CSS filters.
 
 28/04/2018: "Alt + \" to switch between last playback rate and 1x.
