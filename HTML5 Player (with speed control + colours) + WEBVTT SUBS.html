@@ -292,6 +292,7 @@ s.origTrack = 0;
 					document.getElementsByTagName("body")[0].appendChild(tmpBalDiv);
 					tmpBalDiv.className = 'balance-text';
 					tmpBalDiv.innerHTML = subtitleCurr[k];
+					tmpBalDiv.style="background-color: transparent; color: #ffff00; font-size: 192%; font-weight: bold; text-shadow: 1px 4px black, 6px 2px black, -7px -1px black, 7px 4px black; font-family: Segoe UI; transform: scale(0.9,1); -webkit-transform: scale(0.9,1); text-align:center;";
 					balanceText(tmpBalDiv);
 					subtitleCurr[k]= tmpBalDiv.innerHTML;
 					tmpBalDiv.remove();
