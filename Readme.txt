@@ -33,6 +33,8 @@ Double clicking the video toggles fullscreen.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CHANGELOG:
+20/03/2019: Amended default colour matrix
+
 09/03/2019: Tweaked sliders.
 
 01/02/2019: Fixed subtitle line balancing.
