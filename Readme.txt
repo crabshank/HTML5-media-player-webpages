@@ -33,7 +33,9 @@ Double clicking the video toggles fullscreen.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CHANGELOG:
-20/03/2019: Amended default colour matrix
+25/03/2019: Amended default colour matrix (makes black truly black).
+
+20/03/2019: Amended default colour matrix.
 
 09/03/2019: Tweaked sliders.
 
