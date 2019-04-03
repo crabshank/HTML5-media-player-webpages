@@ -10,18 +10,18 @@
 
   <style id="subsCSS" type = "text/css">
   ::cue {
+    font-family: "Microsoft JhengHei UI";
     background-color: transparent;
     color: #ffff00;
-    font-size: 192%;
+    font-size: 590%;
     font-weight: bold;
-    text-shadow: 1px 4px black, 6px 2px black, -7px -1px black, 7px 4px black;
-    font-family: Segoe UI;
+    text-shadow: black -4px -1px, black 5px 2px, black -1px 0px, black -2px 1px;
 }
 
-::-webkit-media-text-track-display {
+<!-- ::-webkit-media-text-track-display {
     transform: translate(0%, -94%) scale(0.9,1);
     -webkit-transform: translate(0%, -94%) scale(0.9,1);
-}
+} -->
   </style>
   
   
@@ -556,18 +556,20 @@ h1 {
 <button onclick="setPlaySpeedUp()" type="button">+0.25x</button>
 
 
+
 <style>
+
 
 textarea#txt4 {
     height: 112px;
-    margin: 1px 742px;
+    margin: 1px 774px;
     position: absolute;
     min-width: 418px;
 }
 
 
 button#Sgo{
-    margin-left: 656px;
+    margin-left: 687px;
     margin-top: 57px;
     position: absolute;
     background-color: rgba(0, 222, 0, 1);
@@ -578,7 +580,7 @@ button#Sgo{
 button#Scl {
     margin-top: 15px;
     position: absolute;
-    margin-left: 656px;
+    margin-left: 687px;
     background-color: rgba(222, 0, 0, 1);
     -webkit-text-fill-color: #ececec;
 }
@@ -616,8 +618,7 @@ button#Scl {
 <style>
 p#vidStat {
     color: #dfdfdf;
-    -webkit-margin-before: 0em;
-    -webkit-margin-after: 0em;
+	margin: 0px;
 }
 </style>
 
@@ -959,30 +960,32 @@ if (evt.wheelDelta<0){
 <div>
     <label>
         <strong>Use custom colour matrix css?</strong>
-    <input type="checkbox" checked="" id="colMat"></label>
+    <input type="checkbox" id="colMat"></label>
 		
-  <div id="clrMtrx">
-<div contenteditable="true" id="colMat1">1.036<br></div>
-<div contenteditable="true" id="colMat2">-0.0286</div>
-<div contenteditable="true" id="colMat3">0.0005</div>
-<div contenteditable="true" id="colMat4">0</div>
-<div contenteditable="true" id="colMat5">-0.0041</div>
-<div contenteditable="true" id="colMat6">-0.1218</div>
-<div contenteditable="true" id="colMat7">1.2056</div>
-<div contenteditable="true" id="colMat8">-0.0745</div>
-<div contenteditable="true" id="colMat9">0</div>
-<div contenteditable="true" id="colMat10">-0.0003</div>
-<div contenteditable="true" id="colMat11">-0.0147</div>
-<div contenteditable="true" id="colMat12">0.002</div>
-<div contenteditable="true" id="colMat13">1.0219<br></div>
-<div contenteditable="true" id="colMat14">0</div>
-<div contenteditable="true" id="colMat15">-0.0046</div>
-<div contenteditable="true" id="colMat16">0</div>
-<div contenteditable="true" id="colMat17">0</div>
-<div contenteditable="true" id="colMat18">0</div>
-<div contenteditable="true" id="colMat19">1</div>
-<div contenteditable="true" id="colMat20">0</div>
+		
+<div id="clrMtrx">
+<div id="colMat1" contenteditable="true">1<br></div>
+<div id="colMat2" contenteditable="true">0</div>
+<div id="colMat3" contenteditable="true">0</div>
+<div id="colMat4" contenteditable="true">0</div>
+<div id="colMat5" contenteditable="true">0</div>
+<div id="colMat6" contenteditable="true">0</div>
+<div id="colMat7" contenteditable="true">1</div>
+<div id="colMat8" contenteditable="true">0</div>
+<div id="colMat9" contenteditable="true">0</div>
+<div id="colMat10" contenteditable="true">0</div>
+<div id="colMat11" contenteditable="true">0</div>
+<div id="colMat12" contenteditable="true">0</div>
+<div id="colMat13" contenteditable="true">1</div>
+<div id="colMat14" contenteditable="true">0</div>
+<div id="colMat15" contenteditable="true">0<br></div>
+<div id="colMat16" contenteditable="true">0</div>
+<div id="colMat17" contenteditable="true">0</div>
+<div id="colMat18" contenteditable="true">0</div>
+<div id="colMat19" contenteditable="true">1</div>
+<div id="colMat20" contenteditable="true">0</div>
 </div>
+
 </div>
   <div>
     <label>
@@ -1017,6 +1020,7 @@ if (evt.wheelDelta<0){
 </aside>
 
 <script>
+document.getElementById("colMat").checked = false; 
 var vid = document.getElementById("video");
     var blur = $('#blur')[0];
     var saturate = $('#saturate')[0];
@@ -1072,7 +1076,7 @@ observerFilt.observe(clrMtrx,
 function updFilters()
 {
 
-if (document.querySelectorAll('div#filter-sample_div').length==0)
+/*if (document.querySelectorAll('div#filter-sample_div').length==0)
 {
 						var divm = document.createElement('div');
 						}else
@@ -1083,28 +1087,27 @@ mtx.remove();
 });
 					var divm = document.createElement('div');
 						
-						}
+						}*/
 						
 	if(clrMtxChk.checked)
 	{
 	
-
+/*
 				divm.innerHTML = "<svg><filter id='filter-sample'><feColorMatrix type='matrix' values='" + clrMtrx.innerText + "'></feColorMatrix></filter></svg>";
 
 				divm.setAttribute('id', 'filter-sample_div');
 				divm.setAttribute('style', 'display: none;');
 	vid.appendChild(divm);
 //	console.log(divm);
-
-	
-    var filters = 'blur(' + blur.value + 'px) saturate(' + saturate.value + ') hue-rotate(' + hue.value + 'deg) brightness(' + brightness.value + ') contrast(' + contrast.value + ') invert(' + invert.value + ') sepia(' + sepia.value + ') url(#filter-sample)';
+*/
+	console.log(clrMtxChk.checked);
+    var filters = 'blur(' + blur.value + 'px) saturate(' + saturate.value + ') hue-rotate(' + hue.value + 'deg) brightness(' + brightness.value + ') contrast(' + contrast.value + ') invert(' + invert.value + ') sepia(' + sepia.value + ")"+ " url(\"data:image/svg+xml;charset=utf-8,<svg xmlns=\\\"http://www.w3.org/2000/svg\\\"><filter id=\\\"filter\\\"><feColorMatrix type=\\\"matrix\\\" values=\\\""+clrMtrx.innerText.split('\n').join('')+"\\\" /></filter></svg>#filter\")";
 	}else
 	{
-	divm.remove();
 	   var filters = 'blur(' + blur.value + 'px) saturate(' + saturate.value + ') hue-rotate(' + hue.value + 'deg) brightness(' + brightness.value + ') contrast(' + contrast.value + ') invert(' + invert.value + ') sepia(' + sepia.value + ')';
 	}
-	
-    $('#video').css('-webkit-filter', filters);
+
+    document.getElementById("video").style.filter=filters;
     $('#blur-val').text(blur.value);
     $('#saturate-val').text(saturate.value);
     $('#hue-val').text(hue.value);
