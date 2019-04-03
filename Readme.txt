@@ -33,6 +33,8 @@ Double clicking the video toggles fullscreen.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CHANGELOG:
+03/04/2019: Added Firefox compatible versions (subtitle colours not supported and colour matrix not enabled), and changed buttons.
+
 25/03/2019: Amended default colour matrix (makes black truly black).
 
 20/03/2019: Amended default colour matrix.
