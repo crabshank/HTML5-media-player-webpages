@@ -1,4 +1,4 @@
-﻿<html> 
+<html> 
 
 <head>
 <script src="jquery-3.3.1.js"></script>
@@ -26,14 +26,14 @@ figure {
 	}
 </style>
 
-<button onclick="setPlusFrames()" type="button">+ 4 thumbs</button>
-<button onclick="setMinusFrames()" type="button">- 4 thumbs</button>
+<button onclick="setPlusFrames()" type="button">+ 3 thumbs</button>
+<button onclick="setMinusFrames()" type="button">- 3 thumbs</button>
 <button onclick="clr()" type="button">Clear</button>
 <input type="text" size="105" name="txtBx" id="txtBx">
 
 <input type="button" Value="Load Video" onClick="changeValue();">
 <input type="button" Value="Generate Thumbs" onClick="doThumbs();"><br>
-<span id="frames">20</span>
+<span id="frames">24</span>
 
 
 <div style="width:90%; text-align:center;">
@@ -47,7 +47,7 @@ figure {
 
 
 <script>
-var t=20;
+var t=24;
 
 
 $("#thumbs").ready(function() {
@@ -56,22 +56,23 @@ $("#thumbs").ready(function() {
 	  //console.log($(('#thumbs > figure > canvas')[index]));
 
 video.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
-
+if (!document.pictureInPictureElement) {
 		 $(window).scrollTop(0);
+		 }
   });
 });
 
 	function setPlusFrames() {
-	t += 4;
+	t += 3;
 	  document.getElementById("frames").innerHTML = t;
 	}
 
 	function setMinusFrames() {
-if(t<4){
+if(t<3){
 t=0;
 }
 else{
-	t -= 4;
+	t -= 3;
 	document.getElementById("frames").innerHTML = t;
 }
 	}
@@ -96,7 +97,7 @@ function changeValue()
 function doThumbs()
 {
     var txtVal = document.getElementById('txtBx').value;
-    alert(txtVal);  
+    //alert(txtVal);  
     var myVdo = document.getElementById("video");     
     myVdo.load(); 
 
