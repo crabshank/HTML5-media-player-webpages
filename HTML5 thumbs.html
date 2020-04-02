@@ -42,11 +42,22 @@ figure {
 <video id="video" width="100%" controls>
     <source id="VdoSrc" src=""></source>
 </video>
-    
+
+<div id="currTime" style="position: fixed;bottom:0;right: 0.73%;background-color: transparent;font-size: 230%;font-weight: bold;text-shadow: 1px 4px black, 6px 2px black, -7px -1px black, 7px 4px black;"></div>
+
 <div id=thumbs></div>
 
 
 <script>
+
+   function formatTime(seconds) {
+    minutes = Math.floor(seconds / 60);
+    minutes = (minutes >= 10) ? minutes : "0" + minutes;
+    seconds = Math.floor(seconds % 60);
+    seconds = (seconds >= 10) ? seconds : "0" + seconds;
+    return minutes + ":" + seconds;
+  }
+
 var t=24;
 
 
@@ -92,10 +103,16 @@ function changeValue()
     var myVdo = document.getElementById("video");     
     myVdo.load(); 
   myVdo.pause();
+if((myVdo)&&(myVdo.currentTime>=0)){
+let curr  =document.getElementById("currTime");
+curr.innerText= formatTime(myVdo.currentTime);
+}
   }
 
 function doThumbs()
 {
+
+
     var txtVal = document.getElementById('txtBx').value;
     //alert(txtVal);  
     var myVdo = document.getElementById("video");     
@@ -109,7 +126,17 @@ var video = document.getElementById("video");
 
 var thumbs = document.getElementById("thumbs");
 
+var curr  =document.getElementById("currTime");
 
+if((video)&&(video.currentTime>=0)){
+curr.innerText= formatTime(video.currentTime);
+}
+
+
+ video.addEventListener('timeupdate', function() {
+	curr.innerText= formatTime(video.currentTime);
+}, false);
+ 
  
 video.addEventListener('loadeddata', function() {
 	thumbs.innerHTML = "";
@@ -162,15 +189,7 @@ c.setAttribute('timestamp', video.currentTime);
  thumbs.appendChild(f);
 
   f.appendChild(c);
-  
-   function formatTime(seconds) {
-    minutes = Math.floor(seconds / 60);
-    minutes = (minutes >= 10) ? minutes : "0" + minutes;
-    seconds = Math.floor(seconds % 60);
-    seconds = (seconds >= 10) ? seconds : "0" + seconds;
-    return minutes + ":" + seconds;
-  }
-  
+    
   ct.innerHTML=formatTime(c.attributes.timestamp.nodeValue);
   f.appendChild(ct);
  
