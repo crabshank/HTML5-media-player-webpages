@@ -104,6 +104,7 @@ function changeValue()
     var myVdo = document.getElementById("video");     
     myVdo.load();
 	thumbs.innerHTML = "";
+	captions=[];
 	loadFlag=true;
 myVdo.currentTime=0;	
   myVdo.pause();
@@ -128,7 +129,7 @@ Object.freeze(lock);
     var myVdo = document.getElementById("video");     
     myVdo.load(); 
 	myVdo.currentTime=0;	
-
+captions=[];
 	if(typeof thumbs!=='undefined'){
 		thumbs.innerHTML = "";
 		}else{
@@ -202,6 +203,7 @@ if (cap_el<captions.length){
 video.addEventListener('loadeddata', function() {
 if (loadFlag===false){
 	thumbs.innerHTML = "";
+	captions=[];
     video.currentTime =   (video.duration)/(lock.t+1);
 	}
 }, false);
