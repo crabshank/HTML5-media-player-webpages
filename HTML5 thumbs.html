@@ -18,6 +18,7 @@ figcaption {
     font-size: 10px;
     display: inline-grid;
     position: absolute;
+	background-color: #00000099;
 }
 
 figure {
@@ -59,13 +60,15 @@ figure {
   }
 
 var t=24;
-
+var nowFlag=-1;
+var captions=[];
 
 $("#thumbs").ready(function() {
   $("#thumbs").on("click", "figure", function() {
+
     var index = $("figure").index(this);
 	  //console.log($(('#thumbs > figure > canvas')[index]));
-
+  nowFlag=index;
 video.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
 if (!document.pictureInPictureElement) {
 		 $(window).scrollTop(0);
@@ -79,13 +82,10 @@ if (!document.pictureInPictureElement) {
 	}
 
 	function setMinusFrames() {
-if(t<3){
-t=0;
-}
-else{
-	t -= 3;
+
+	t=(t<3)?0:t-3;
 	document.getElementById("frames").innerHTML = t;
-}
+
 	}
 
 function clr(){
@@ -111,8 +111,8 @@ curr.innerText= formatTime(myVdo.currentTime);
 
 function doThumbs()
 {
-
-
+captions=[];
+var lock_t=t;
     var txtVal = document.getElementById('txtBx').value;
     //alert(txtVal);  
     var myVdo = document.getElementById("video");     
@@ -135,12 +135,54 @@ curr.innerText= formatTime(video.currentTime);
 
  video.addEventListener('timeupdate', function() {
 	curr.innerText= formatTime(video.currentTime);
+
+	for(let i=0;i<captions.length;i++){
+	captions[i].innerText=captions[i].previousSibling.attributes.timestamp_fmt.nodeValue;
+	captions[i].style.backgroundColor="#00000099";
+	}
+	
+	let cap=video.currentTime*(lock_t+1)/video.duration;
+	let cap_el=Math.floor(cap);
+	
+if(captions.length==lock_t){
+if (cap_el<captions.length){
+
+	if(nowFlag>-1){
+			captions[nowFlag].innerText=captions[nowFlag].previousSibling.attributes.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[nowFlag].style.backgroundColor="#0004ff99";
+			nowFlag=-1;
+	}else if ((cap==cap_el)&&(cap_el>0)){
+			captions[cap_el-1].innerText=captions[cap_el-1].previousSibling.attributes.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[cap_el-1].style.backgroundColor="#0004ff99";
+	}else{
+			captions[cap_el].innerText=captions[cap_el].previousSibling.attributes.timestamp_fmt.nodeValue+" (NEXT)";
+	if (cap_el>0){
+			captions[cap_el-1].innerText=captions[cap_el-1].previousSibling.attributes.timestamp_fmt.nodeValue+" (LAST)";
+			captions[cap_el-1].style.backgroundColor="#006115c7";
+	}
+	}
+}else{
+
+	if(nowFlag>-1){
+			captions[nowFlag].innerText=captions[nowFlag].previousSibling.attributes.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[nowFlag].style.backgroundColor="#0004ff99";
+			nowFlag=-1;
+	}else if (cap==cap_el){
+			captions[cap_el-1].innerText=captions[cap_el-1].previousSibling.attributes.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[cap_el-1].style.backgroundColor="#0004ff99";
+	}else{
+		captions[cap_el-1].innerText=captions[cap_el-1].previousSibling.attributes.timestamp_fmt.nodeValue+" (LAST)";
+		captions[cap_el-1].style.backgroundColor="#006115c7";
+		}
+		
+}
+}
 }, false);
  
  
 video.addEventListener('loadeddata', function() {
 	thumbs.innerHTML = "";
-    video.currentTime =   (video.duration)/(t+1);
+    video.currentTime =   (video.duration)/(lock_t+1);
 }, false);
 
 video.addEventListener('seeked', function() {
@@ -150,9 +192,9 @@ if(aseek==1){
     generateThumbnail();
 
     ttmp++;
-i=ttmp*(video.duration/(t+1));
+i=ttmp*(video.duration/(lock_t+1));
 
-    if (ttmp<=t) {
+    if (ttmp<=lock_t) {
 
         video.currentTime = i;
 
@@ -181,6 +223,8 @@ var scl=0.3
   c.height = video.clientHeight*scl;
   
 c.setAttribute('timestamp', video.currentTime);
+let format_time=formatTime(video.currentTime);
+c.setAttribute('timestamp_fmt', format_time);
 
 
   ctx.drawImage(video, 0, 0, c.width, c.height);
@@ -190,8 +234,9 @@ c.setAttribute('timestamp', video.currentTime);
 
   f.appendChild(c);
     
-  ct.innerHTML=formatTime(c.attributes.timestamp.nodeValue);
+  ct.innerHTML=format_time;
   f.appendChild(ct);
+  captions.push(ct);
  
   }
 }
