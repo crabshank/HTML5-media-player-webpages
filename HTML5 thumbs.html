@@ -101,7 +101,8 @@ function changeValue()
     var vid = document.getElementById('VdoSrc');
     vid.src = txtVal;  
     var myVdo = document.getElementById("video");     
-    myVdo.load(); 
+    myVdo.load();
+myVdo.currentTime=0;	
   myVdo.pause();
 if((myVdo)&&(myVdo.currentTime>=0)){
 let curr  =document.getElementById("currTime");
@@ -112,7 +113,12 @@ curr.innerText= formatTime(myVdo.currentTime);
 function doThumbs()
 {
 captions=[];
-var lock_t=t;
+const lock = {
+  t: t
+};
+
+Object.freeze(lock);
+
     var txtVal = document.getElementById('txtBx').value;
     //alert(txtVal);  
     var myVdo = document.getElementById("video");     
@@ -141,10 +147,10 @@ curr.innerText= formatTime(video.currentTime);
 	captions[i].style.backgroundColor="#00000099";
 	}
 	
-	let cap=video.currentTime*(lock_t+1)/video.duration;
+	let cap=video.currentTime*(lock.t+1)/video.duration;
 	let cap_el=Math.floor(cap);
 	
-if(captions.length==lock_t){
+if(captions.length==lock.t){
 if (cap_el<captions.length){
 
 	if(nowFlag>-1){
@@ -182,7 +188,7 @@ if (cap_el<captions.length){
  
 video.addEventListener('loadeddata', function() {
 	thumbs.innerHTML = "";
-    video.currentTime =   (video.duration)/(lock_t+1);
+    video.currentTime =   (video.duration)/(lock.t+1);
 }, false);
 
 video.addEventListener('seeked', function() {
@@ -192,9 +198,9 @@ if(aseek==1){
     generateThumbnail();
 
     ttmp++;
-i=ttmp*(video.duration/(lock_t+1));
+i=ttmp*(video.duration/(lock.t+1));
 
-    if (ttmp<=lock_t) {
+    if (ttmp<=lock.t) {
 
         video.currentTime = i;
 
