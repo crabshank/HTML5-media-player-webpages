@@ -44,7 +44,7 @@ figure {
     <source id="VdoSrc" src=""></source>
 </video>
 
-<div id="currTime" style="position: fixed;bottom: 0.17%;right: 0.73%;color: white;background-color: black;font-size: 230%;font-weight: bold;"></div>
+<div id="currTime" style="position: fixed;bottom: 0.17%;right: 0.73%;color: white;background-color: black;font-size: 185%;font-weight: bold;"></div>
 
 <div id=thumbs></div>
 
@@ -110,7 +110,7 @@ myVdo.currentTime=0;
   myVdo.pause();
 if((myVdo)&&(myVdo.currentTime>=0)){
 let curr  =document.getElementById("currTime");
-curr.innerText= formatTime(myVdo.currentTime);
+curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 }
   }
 
@@ -147,13 +147,16 @@ var video = document.getElementById("video");
 var curr  =document.getElementById("currTime");
 
 if((video)&&(video.currentTime>=0)){
-curr.innerText= formatTime(video.currentTime);
+	curr.innerText= formatTime(video.currentTime)+"\n("+video.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 }
 
 
+ video.addEventListener('ratechange', function() {
+ 	curr.innerText= formatTime(video.currentTime)+"\n("+video.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+ });
  video.addEventListener('timeupdate', function() {
  
-	curr.innerText= formatTime(video.currentTime);
+	curr.innerText= formatTime(video.currentTime)+"\n("+video.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 if (loadFlag===false){
 	for(let i=0;i<captions.length;i++){
 	captions[i].innerText=captions[i].previousSibling.attributes.timestamp_fmt.nodeValue;
