@@ -46,7 +46,7 @@ figure {
 
 <div id="currTime" style="position: fixed;bottom: 0.17%;right: 0.73%;color: white;background-color: black;font-size: 185%;font-weight: bold;"></div>
 
-<div id="thumbs"></div>
+<div id="thumbs"style="margin-block-start: 0.1%;"></div>
 
 <script>
 var t=24;
@@ -56,12 +56,17 @@ var aseek=0;
 var captions=[];
 var ttmp=1;
 var thumbs=document.getElementById("thumbs");
+var myVdo = document.getElementById("video"); 3
+
+window.addEventListener('resize', function () {
+thumbs.style.zoom=((100/3)*(myVdo.clientWidth/myVdo.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+});
+
 var curr  =document.getElementById("currTime");
 var txtBx = document.getElementById('txtBx');
-var myVdo = document.getElementById("video"); 
 var vid = document.getElementById('VdoSrc');
 
-   function formatTime(seconds,precise) {
+function formatTime(seconds,precise) {
 var minutes = Math.floor(seconds / 60);
 var secs = seconds % 60;
 let floorSecs =Math.floor(secs);
@@ -272,9 +277,7 @@ console.log(f);
 
   c.width= v_width;
    c.height=v_height;   
-   
-  ct.style.width= v_width;
-   ct.style.height=v_height; 
+
 
    f.style.width= v_width;
    f.style.height=v_height;
@@ -286,7 +289,9 @@ c.setAttribute('timestamp_fmt', format_time);
 
   ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 
+
 thumbs.style.zoom=((100/3)*(myVdo.clientWidth/v_width)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+
  thumbs.appendChild(f);
 
   f.appendChild(c);
