@@ -173,7 +173,7 @@ curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleS
 	
 	let cap=myVdo.currentTime*(t+1)/myVdo.duration;
 	let cap_el=Math.floor(cap);
-	let perc=Math.max(0,(cap-cap_el)*100).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+	let perc=Math.min(100,Math.max(0,(cap-cap_el)*100)).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
 
 	
 if(captions.length==t){
