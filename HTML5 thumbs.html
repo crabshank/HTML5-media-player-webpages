@@ -40,36 +40,54 @@ figure {
 <div style="width:90%; text-align:center;">
 
 
-<video id="video" width="100%" controls>
+<video id="video" style="width:90%;" controls>
     <source id="VdoSrc" src=""></source>
 </video>
 
 <div id="currTime" style="position: fixed;bottom: 0.17%;right: 0.73%;color: white;background-color: black;font-size: 185%;font-weight: bold;"></div>
 
-<div id=thumbs></div>
-
+<div id="thumbs"></div>
 
 <script>
-
-   function formatTime(seconds) {
-    minutes = Math.floor(seconds / 60);
-    minutes = (minutes >= 10) ? minutes : "0" + minutes;
-    seconds = Math.floor(seconds % 60);
-    seconds = (seconds >= 10) ? seconds : "0" + seconds;
-    return minutes + ":" + seconds;
-  }
-
 var t=24;
+var loadFlag=false;
 var nowFlag=-1;
-var loadFlag=true;
+var aseek=0;
 var captions=[];
+var ttmp=1;
+var thumbs=document.getElementById("thumbs");
+var curr  =document.getElementById("currTime");
+var txtBx = document.getElementById('txtBx');
+var myVdo = document.getElementById("video"); 
+var vid = document.getElementById('VdoSrc');
+
+   function formatTime(seconds,precise) {
+var minutes = Math.floor(seconds / 60);
+var secs = seconds % 60;
+let floorSecs =Math.floor(secs);
+if (typeof precise!=='undefined'){
+	minutes +="m";
+if(precise==1){
+secs =Math.floor((seconds-floorSecs) *10);
+secs=" "+floorSecs+"."+Math.max(0,secs).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})+"s";
+}else if(precise==2){
+	secs =Math.floor((seconds-floorSecs) *1000);
+	secs=" "+floorSecs+"s "+Math.max(0,secs).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})+"ms";
+	}
+}else{
+	minutes=(minutes < 10) ? "0" + minutes: minutes;
+	secs = (seconds < 10) ? ":0" + floorSecs:":"+floorSecs ;
+}
+
+	return minutes + secs;
+  }  
 
 $("#thumbs").ready(function() {
   $("#thumbs").on("click", "figure", function() {
-
     var index = $("figure").index(this);
+	nowFlag=index;
 	  //console.log($(('#thumbs > figure > canvas')[index]));
-  nowFlag=index;
+
 video.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
 if (!document.pictureInPictureElement) {
 		 $(window).scrollTop(0);
@@ -78,185 +96,197 @@ if (!document.pictureInPictureElement) {
 });
 
 	function setPlusFrames() {
-	t += 3;
-	  document.getElementById("frames").innerHTML = t;
+	if (aseek==0){
+			t += 3;
+			document.getElementById("frames").innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime((document.getElementById("video").duration)/(t+1),2):t;
+			}
 	}
 
 	function setMinusFrames() {
-
-	t=(t<6)?3:t-3;
-	document.getElementById("frames").innerHTML = t;
-
+		if (aseek==0){
+		t=(t<6)?3:t-3;
+		document.getElementById("frames").innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime((document.getElementById("video").duration)/(t+1),2):t;
+		}
 	}
 
 function clr(){
 document.getElementById('txtBx').value=""
-
 }
 
 
 function changeValue()
 {
-    var txtVal = document.getElementById('txtBx').value;
+	loadFlag=false;
+	ttmp=1;
+	let txtVal=txtBx.value;
     alert(txtVal);  
-    var vid = document.getElementById('VdoSrc');
-    vid.src = txtVal;  
-    var myVdo = document.getElementById("video");     
-    myVdo.load();
-	thumbs.innerHTML = "";
-	captions=[];
-	loadFlag=true;
-myVdo.currentTime=0;	
+    vid.src = txtVal;      
+    myVdo.load(); 
   myVdo.pause();
-if((myVdo)&&(myVdo.currentTime>=0)){
-let curr  =document.getElementById("currTime");
-curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+  	captions=[];
+	thumbs.innerHTML="";
+  var interval= setInterval(checkDur, 150);
+
+function checkDur() {
+	if ((myVdo)&&(myVdo.currentTime>=0)&&(myVdo.duration>=0)){
+	loadFlag=true;
+	myVdo.currentTime=0;	
+		curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+		document.getElementById("frames").innerHTML =t+" - Thumbnails every: "+formatTime((myVdo.duration)/(t+1),2);
+		clearInterval(interval);
+	}
 }
+
+
   }
 
 function doThumbs()
 {
-	loadFlag=false;
+if (loadFlag===true){
 captions=[];
-const lock = {
-  t: t
-};
-
-Object.freeze(lock);
-
-    var txtVal = document.getElementById('txtBx').value;
-    //alert(txtVal);  
-    var myVdo = document.getElementById("video");     
+thumbs.innerHTML="";
+nowFlag=-1;
+    
     myVdo.load(); 
-	myVdo.currentTime=0;	
-captions=[];
-	if(typeof thumbs!=='undefined'){
-		thumbs.innerHTML = "";
-		}else{
-		var thumbs = document.getElementById("thumbs");
-		}
 
-var aseek=1;
-var i = 0;
-var ttmp=1;
+ aseek=1;
 
-var video = document.getElementById("video");
+curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 
-
-
-var curr  =document.getElementById("currTime");
-
-if((video)&&(video.currentTime>=0)){
-	curr.innerText= formatTime(video.currentTime)+"\n("+video.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-}
-
-
- video.addEventListener('ratechange', function() {
- 	curr.innerText= formatTime(video.currentTime)+"\n("+video.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+ myVdo.addEventListener('ratechange', function() {
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
  });
- video.addEventListener('timeupdate', function() {
+
+ myVdo.addEventListener('timeupdate', function() {
  
-	curr.innerText= formatTime(video.currentTime)+"\n("+video.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-if (loadFlag===false){
+	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+
 	for(let i=0;i<captions.length;i++){
 	captions[i].innerText=captions[i].previousSibling.attributes.timestamp_fmt.nodeValue;
 	captions[i].style.backgroundColor="#00000099";
 	}
 	
-	let cap=video.currentTime*(lock.t+1)/video.duration;
+	let cap=myVdo.currentTime*(t+1)/myVdo.duration;
 	let cap_el=Math.floor(cap);
-	
-if(captions.length==lock.t){
-if (cap_el<captions.length){
+	let perc=Math.max(0,(cap-cap_el)*100).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
 
+	
+if(captions.length==t){
+
+if ((cap_el>0)&&(cap_el-1<captions.length)){
+var attr_prev=captions[cap_el-1].previousSibling.attributes;
+}else if ((cap_el>0)&&(cap_el-1>=captions.length)){
+var attr_prev=captions[captions.length-1].previousSibling.attributes;
+}
+
+if(nowFlag>-1){
+var attr_now=captions[nowFlag].previousSibling.attributes;
+}
+
+if (cap_el<captions.length){
+var attr=captions[cap_el].previousSibling.attributes;
 	if(nowFlag>-1){
-			captions[nowFlag].innerText=captions[nowFlag].previousSibling.attributes.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.backgroundColor="#0004ff99";
 			nowFlag=-1;
 	}else if ((cap==cap_el)&&(cap_el>0)){
-			captions[cap_el-1].innerText=captions[cap_el-1].previousSibling.attributes.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[cap_el-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[cap_el-1].style.backgroundColor="#0004ff99";
 	}else{
-			captions[cap_el].innerText=captions[cap_el].previousSibling.attributes.timestamp_fmt.nodeValue+" (NEXT)";
+		var until=(cap_el<captions.length)?Math.max(0,attr.timestamp.nodeValue-myVdo.currentTime):Math.max(0,myVdo.duration-myVdo.currentTime);
+		until=formatTime(until,1);
+			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NEXT) ["+until+"]";
 	if (cap_el>0){
-			captions[cap_el-1].innerText=captions[cap_el-1].previousSibling.attributes.timestamp_fmt.nodeValue+" (LAST)";
+			captions[cap_el-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
 			captions[cap_el-1].style.backgroundColor="#006115c7";
 	}
 	}
 }else{
 
 	if(nowFlag>-1){
-			captions[nowFlag].innerText=captions[nowFlag].previousSibling.attributes.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.backgroundColor="#0004ff99";
 			nowFlag=-1;
 	}else if (cap==cap_el){
-			captions[cap_el-1].innerText=captions[cap_el-1].previousSibling.attributes.timestamp_fmt.nodeValue+" (NOW!)";
-			captions[cap_el-1].style.backgroundColor="#0004ff99";
-	}else{
-		captions[cap_el-1].innerText=captions[cap_el-1].previousSibling.attributes.timestamp_fmt.nodeValue+" (LAST)";
-		captions[cap_el-1].style.backgroundColor="#006115c7";
+		if(cap_el-1>=captions.length){
+			captions[captions.length-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
+			captions[captions.length-1].style.backgroundColor="#006115c7";
+		}else{
+		captions[cap_el-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (NOW!)";
+		captions[cap_el-1].style.backgroundColor="#0004ff99";
 		}
+	}else{
+			captions[captions.length-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			captions[captions.length-1].style.backgroundColor="#006115c7";
+	}
 		
 }
 }
-}
-}, false);
- 
- 
-video.addEventListener('loadeddata', function() {
-if (loadFlag===false){
-	thumbs.innerHTML = "";
-	captions=[];
-    video.currentTime =   (video.duration)/(lock.t+1);
-	}
+
 }, false);
 
-video.addEventListener('seeked', function() {
-if (loadFlag===false){
-if(aseek==1){
+ 
+myVdo.addEventListener('loadeddata', function() {
+if (captions.length==0){
+ttmp=1;
+	thumbs.innerHTML = "";
+   myVdo.currentTime =   (myVdo.duration)/(t+1);
+   }
+}, false);
+
+myVdo.addEventListener('seeked', function() {
+
+if(aseek==1){  
 
     generateThumbnail();
 
     ttmp++;
-i=ttmp*(video.duration/(lock.t+1));
 
-    if (ttmp<=lock.t) {
+    if (ttmp<=t) {
 
-        video.currentTime = i;
+        myVdo.currentTime = ttmp*(myVdo.duration/(t+1));
 
-    }
-	else {
-
+    }else {
 aseek=0;
+ttmp=1;
+myVdo.currentTime=0;
     return;
     }
-}
-else{
+}else{
 return;
-}
 }
 }, false);
 
 
 
 function generateThumbnail() {
-var f = document.createElement("figure");
+
+var f = document.createElement("figure");;
 var ct=document.createElement("figcaption");
 console.log(f);
   var c = document.createElement("canvas");
   var ctx = c.getContext("2d");
-var scl=0.3
-  c.width = video.clientWidth*scl;
-  c.height = video.clientHeight*scl;
-  
-c.setAttribute('timestamp', video.currentTime);
-let format_time=formatTime(video.currentTime);
+
+  let v_width = myVdo.videoWidth;
+  let v_height = myVdo.videoHeight;
+
+  c.width= v_width;
+   c.height=v_height;   
+   
+  ct.style.width= v_width;
+   ct.style.height=v_height; 
+
+   f.style.width= v_width;
+   f.style.height=v_height;
+
+c.setAttribute('timestamp', myVdo.currentTime);
+let format_time=formatTime(myVdo.currentTime);
 c.setAttribute('timestamp_fmt', format_time);
 
 
-  ctx.drawImage(video, 0, 0, c.width, c.height);
+  ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 
-
+thumbs.style.zoom=((100/3)*(myVdo.clientWidth/v_width)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
  thumbs.appendChild(f);
 
   f.appendChild(c);
@@ -264,10 +294,13 @@ c.setAttribute('timestamp_fmt', format_time);
   ct.innerHTML=format_time;
   f.appendChild(ct);
   captions.push(ct);
- 
   }
+  
+}else{
+alert('Video not loaded!');
 }
 
+}
 
 
 
