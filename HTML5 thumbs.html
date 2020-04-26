@@ -135,6 +135,7 @@ function changeValue()
 function checkDur() {
 	if ((myVdo)&&(myVdo.currentTime>=0)&&(myVdo.duration>=0)){
 	loadFlag=true;
+	nowFlag=-1;
 	myVdo.currentTime=0;	
 		curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 		document.getElementById("frames").innerHTML =t+" - Thumbnails every: "+formatTime((myVdo.duration)/(t+1),2);
@@ -150,7 +151,7 @@ function doThumbs()
 if (loadFlag===true){
 captions=[];
 thumbs.innerHTML="";
-nowFlag=-1;
+
     
     myVdo.load(); 
 
@@ -193,7 +194,6 @@ var attr=captions[cap_el].previousSibling.attributes;
 	if(nowFlag>-1){
 			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.backgroundColor="#0004ff99";
-			nowFlag=-1;
 	}else if ((cap==cap_el)&&(cap_el>0)){
 			captions[cap_el-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[cap_el-1].style.backgroundColor="#0004ff99";
@@ -211,7 +211,6 @@ var attr=captions[cap_el].previousSibling.attributes;
 	if(nowFlag>-1){
 			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.backgroundColor="#0004ff99";
-			nowFlag=-1;
 	}else if (cap==cap_el){
 		if(cap_el-1>=captions.length){
 			captions[captions.length-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
@@ -227,7 +226,6 @@ var attr=captions[cap_el].previousSibling.attributes;
 		
 }
 }
-
 }, false);
 
  
@@ -258,6 +256,7 @@ myVdo.currentTime=0;
     return;
     }
 }else{
+	nowFlag=-1;
 return;
 }
 }, false);
