@@ -74,10 +74,10 @@ let floorSecs =Math.floor(secs);
 if (typeof precise!=='undefined'){
 	minutes +="m";
 if(precise==1){
-secs =Math.ceil((seconds-floorSecs) *10);
+secs =Math.ceil((secs-floorSecs) *10);
 secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})+"s";
 }else if(precise==2){
-	secs =Math.ceil((seconds-floorSecs) *1000);
+	secs =Math.ceil((secs-floorSecs) *1000);
 	secs=(secs==1000)?" "+(floorSecs+1)+"s 0ms":" "+floorSecs+"s "+Math.max(0,secs).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})+"ms";
 	}
 }else{
