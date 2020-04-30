@@ -82,7 +82,7 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
 	}
 }else{
 	minutes=(minutes < 10) ? "0" + minutes: minutes;
-	secs = (seconds < 10) ? ":0" + floorSecs:":"+floorSecs ;
+	secs = (floorSecs < 10) ? ":0" + floorSecs:":"+floorSecs ;
 }
 
 	return minutes + secs;
