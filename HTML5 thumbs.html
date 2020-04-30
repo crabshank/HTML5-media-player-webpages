@@ -50,11 +50,12 @@ figure {
 
 <script>
 var t=24;
+var done_t=t;
 var loadFlag=false;
 var nowFlag=-1;
 var aseek=0;
 var captions=[];
-var ttmp=1;
+var ttmp=0;
 var thumbs=document.getElementById("thumbs");
 var myVdo = document.getElementById("video"); 3
 
@@ -73,11 +74,11 @@ let floorSecs =Math.floor(secs);
 if (typeof precise!=='undefined'){
 	minutes +="m";
 if(precise==1){
-secs =Math.floor((seconds-floorSecs) *10);
-secs=" "+floorSecs+"."+Math.max(0,secs).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})+"s";
+secs =Math.ceil((seconds-floorSecs) *10);
+secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})+"s";
 }else if(precise==2){
-	secs =Math.floor((seconds-floorSecs) *1000);
-	secs=" "+floorSecs+"s "+Math.max(0,secs).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})+"ms";
+	secs =Math.ceil((seconds-floorSecs) *1000);
+	secs=(secs==1000)?" "+(floorSecs+1)+"s 0ms":" "+floorSecs+"s "+Math.max(0,secs).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})+"ms";
 	}
 }else{
 	minutes=(minutes < 10) ? "0" + minutes: minutes;
@@ -103,14 +104,14 @@ if (!document.pictureInPictureElement) {
 	function setPlusFrames() {
 	if (aseek==0){
 			t += 3;
-			document.getElementById("frames").innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime((document.getElementById("video").duration)/(t+1),2):t;
+			document.getElementById("frames").innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(document.getElementById("video").duration/t,2):t;
 			}
 	}
 
 	function setMinusFrames() {
 		if (aseek==0){
 		t=(t<6)?3:t-3;
-		document.getElementById("frames").innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime((document.getElementById("video").duration)/(t+1),2):t;
+		document.getElementById("frames").innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(document.getElementById("video").duration/t,2):t;
 		}
 	}
 
@@ -122,7 +123,7 @@ document.getElementById('txtBx').value=""
 function changeValue()
 {
 	loadFlag=false;
-	ttmp=1;
+	ttmp=0;
 	let txtVal=txtBx.value;
     alert(txtVal);  
     vid.src = txtVal;      
@@ -138,7 +139,7 @@ function checkDur() {
 	nowFlag=-1;
 	myVdo.currentTime=0;	
 		curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-		document.getElementById("frames").innerHTML =t+" - Thumbnails every: "+formatTime((myVdo.duration)/(t+1),2);
+		document.getElementById("frames").innerHTML =t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2);
 		clearInterval(interval);
 	}
 }
@@ -148,7 +149,9 @@ function checkDur() {
 
 function doThumbs()
 {
+	
 if (loadFlag===true){
+	 done_t=t;
 captions=[];
 thumbs.innerHTML="";
 
@@ -171,39 +174,37 @@ curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleS
 	captions[i].style.backgroundColor="#00000099";
 	}
 	
-	let cap=myVdo.currentTime*(t+1)/myVdo.duration;
+	let cap=myVdo.currentTime*(done_t)/myVdo.duration;
 	let cap_el=Math.floor(cap);
 	let perc=Math.min(100,Math.max(0,(cap-cap_el)*100)).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
 
 	
-if(captions.length==t){
+if(captions.length==done_t){
 
-if ((cap_el>0)&&(cap_el-1<captions.length)){
-var attr_prev=captions[cap_el-1].previousSibling.attributes;
-}else if ((cap_el>0)&&(cap_el-1>=captions.length)){
-var attr_prev=captions[captions.length-1].previousSibling.attributes;
+if (cap_el<captions.length){
+var attr=captions[cap_el].previousSibling.attributes;
+}else if (cap_el>=captions.length){
+var attr=captions[captions.length-1].previousSibling.attributes;
 }
 
 if(nowFlag>-1){
 var attr_now=captions[nowFlag].previousSibling.attributes;
 }
 
-if (cap_el<captions.length){
-var attr=captions[cap_el].previousSibling.attributes;
+if (cap_el+1<captions.length){
+var attr_next=captions[cap_el+1].previousSibling.attributes;
 	if(nowFlag>-1){
 			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.backgroundColor="#0004ff99";
-	}else if ((cap==cap_el)&&(cap_el>0)){
-			captions[cap_el-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (NOW!)";
-			captions[cap_el-1].style.backgroundColor="#0004ff99";
+	}else if (cap==cap_el){
+			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[cap_el].style.backgroundColor="#0004ff99";
 	}else{
-		var until=(cap_el<captions.length)?Math.max(0,attr.timestamp.nodeValue-myVdo.currentTime):Math.max(0,myVdo.duration-myVdo.currentTime);
+		var until=(cap_el<captions.length)?Math.max(0,attr_next.timestamp.nodeValue-myVdo.currentTime):Math.max(0,myVdo.duration-myVdo.currentTime);
 		until=formatTime(until,1);
-			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NEXT) ["+until+"]";
-	if (cap_el>0){
-			captions[cap_el-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
-			captions[cap_el-1].style.backgroundColor="#006115c7";
-	}
+			captions[cap_el+1].innerText=attr_next.timestamp_fmt.nodeValue+" (NEXT) ["+until+"]";
+			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			captions[cap_el].style.backgroundColor="#006115c7";
 	}
 }else{
 
@@ -211,15 +212,15 @@ var attr=captions[cap_el].previousSibling.attributes;
 			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.backgroundColor="#0004ff99";
 	}else if (cap==cap_el){
-		if(cap_el-1>=captions.length){
-			captions[captions.length-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
+		if(cap_el>=captions.length){
+			captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
 			captions[captions.length-1].style.backgroundColor="#006115c7";
 		}else{
-		captions[cap_el-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (NOW!)";
-		captions[cap_el-1].style.backgroundColor="#0004ff99";
+		captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+		captions[cap_el].style.backgroundColor="#0004ff99";
 		}
 	}else{
-			captions[captions.length-1].innerText=attr_prev.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
 			captions[captions.length-1].style.backgroundColor="#006115c7";
 	}
 		
@@ -230,9 +231,9 @@ var attr=captions[cap_el].previousSibling.attributes;
  
 myVdo.addEventListener('loadeddata', function() {
 if (captions.length==0){
-ttmp=1;
+ttmp=0;
 	thumbs.innerHTML = "";
-   myVdo.currentTime =   (myVdo.duration)/(t+1);
+   myVdo.currentTime = 0;
    }
 }, false);
 
@@ -244,68 +245,61 @@ if(aseek==1){
 
     ttmp++;
 
-    if (ttmp<=t) {
-
-        myVdo.currentTime = ttmp*(myVdo.duration/(t+1));
-
+    if (ttmp<done_t) {
+        myVdo.currentTime = ttmp*(myVdo.duration/t);
     }else {
-aseek=0;
-ttmp=1;
-myVdo.currentTime=0;
-    return;
+		aseek=0;
+		ttmp=0;
+		myVdo.currentTime=0;
+		return;
     }
+	
 }else{
 	nowFlag=-1;
 return;
 }
 }, false);
 
-
-
 function generateThumbnail() {
 
 var f = document.createElement("figure");;
 var ct=document.createElement("figcaption");
 console.log(f);
-  var c = document.createElement("canvas");
-  var ctx = c.getContext("2d");
+var c = document.createElement("canvas");
+var ctx = c.getContext("2d");
 
-  let v_width = myVdo.videoWidth;
-  let v_height = myVdo.videoHeight;
+let v_width = myVdo.videoWidth;
+let v_height = myVdo.videoHeight;
 
-  c.width= v_width;
-   c.height=v_height;   
+c.width= v_width;
+c.height=v_height;   
 
-
-   f.style.width= v_width;
-   f.style.height=v_height;
+f.style.width= v_width;
+f.style.height=v_height;
 
 c.setAttribute('timestamp', myVdo.currentTime);
 let format_time=formatTime(myVdo.currentTime);
 c.setAttribute('timestamp_fmt', format_time);
 
-
-  ctx.drawImage(myVdo, 0, 0, v_width, v_height);
-
+ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 
 thumbs.style.zoom=((100/3)*(myVdo.clientWidth/v_width)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 
- thumbs.appendChild(f);
+thumbs.appendChild(f);
 
-  f.appendChild(c);
-    
-  ct.innerHTML=format_time;
-  f.appendChild(ct);
-  captions.push(ct);
-  }
+f.appendChild(c);
+
+ct.innerHTML=format_time;
+f.appendChild(ct);
+captions.push(ct);
+
+}
   
 }else{
 alert('Video not loaded!');
 }
 
 }
-
-
 
 </script>
 
