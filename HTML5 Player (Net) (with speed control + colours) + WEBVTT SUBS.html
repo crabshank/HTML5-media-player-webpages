@@ -121,10 +121,8 @@ console.log(s.track);
 						s.track.src = vttURL(s.vtt);
 					s.track.track.mode = "showing";
 $("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + " ms.");
-					
-					s.track.addEventListener("cuechange", function()
-					{
 
+					s.track.oncuechange = function () {
 						if (s.origTrack == 0)
 						{
 							balanceSubs();
@@ -148,7 +146,8 @@ $("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB',
 							$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + "0 ms.");
 							console.log("Reference track created!\nYou can set the subtitles' delay now!");
 						}
-					}, false)
+					}
+
 					}
 					}
 					
@@ -899,17 +898,14 @@ function Forwards() {
 vid.currentTime = vid.currentTime + 1;
 }
 
-$(vid).mouseenter(function() {
-
+vid.onmouseenter=function(){
 
         var idleMouseTimer;
         var forceMouseHide = false;
 
         $("body").css('cursor', 'none');
-		
-		vid.addEventListener('mousemove', cursorhide, true);
-		
-		  function cursorhide (ev) {
+
+vid.onmousemove = (event) => {
                 if(!forceMouseHide) {
                         $("body").css('cursor', '');
 
@@ -926,29 +922,24 @@ $(vid).mouseenter(function() {
                 }
 }
 
+vid.onmousewheel = (event) => {
+event.preventDefault();
+event.stopPropagation();
 
-
-
-vid.addEventListener('mousewheel', handleMouseWheel, true);
-    function handleMouseWheel(evt) {
-var current = $(window).scrollTop();
-$(window).scroll(function() {
-    $(window).scrollTop(current);
-});   
-
-if(evt.wheelDelta>0){
-   vid.currentTime += ((evt.wheelDelta*vid.duration)/(evt.wheelDelta*1001)); // 
+if(event.wheelDelta>0){
+   vid.currentTime += ((event.wheelDelta*vid.duration)/(event.wheelDelta*1001)); // 
 }
-if (evt.wheelDelta<0){
-	vid.currentTime += (evt.wheelDelta/800)
+if (event.wheelDelta<0){
+	vid.currentTime += (event.wheelDelta/800)
 }
     }
-  })
-  .mouseleave(function() {
-    $(window).off('scroll');
-  });
 
-  
+}
+
+  vid.onmouseleave=function() {
+    $(window).off('scroll');
+  };
+
   vid.addEventListener('ratechange', function(){
   
   				$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " +s.d+  "ms.");

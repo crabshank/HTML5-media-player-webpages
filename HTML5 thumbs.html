@@ -1,4 +1,4 @@
-﻿<html> 
+﻿﻿<html> 
 
 <head>
 <script src="jquery-3.4.1.min.js"></script>
@@ -161,13 +161,13 @@ aseek=1;
 
 curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 
- myVdo.addEventListener('ratechange', function() {
+ myVdo.onratechange =function() {
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
- });
-
- myVdo.addEventListener('timeupdate', function() {
+ } 
  
-	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+
+ myVdo.ontimeupdate= function() {
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 
 	for(let i=0;i<captions.length;i++){
 	captions[i].innerText=captions[i].previousSibling.attributes.timestamp_fmt.nodeValue;
@@ -226,20 +226,18 @@ var attr_next=captions[cap_el+1].previousSibling.attributes;
 		
 }
 }
-}, false);
+ }
 
- 
-myVdo.addEventListener('loadeddata', function() {
+myVdo.onloadeddata= function() {
 if (captions.length==0){
 ttmp=0;
 	thumbs.innerHTML = "";
    myVdo.currentTime = 0;
-   }
-}, false);
-
-myVdo.addEventListener('seeked', function() {
-
-if(aseek==1){  
+   } 
+}
+ 
+ myVdo.onseeked= function() {
+ if(aseek==1){  
 
     generateThumbnail();
 
@@ -258,8 +256,9 @@ if(aseek==1){
 	nowFlag=-1;
 return;
 }
-}, false);
 
+ }
+ 
 function generateThumbnail() {
 
 var f = document.createElement("figure");
