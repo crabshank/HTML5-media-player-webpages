@@ -1018,15 +1018,15 @@ vid.onmousemove = (event) => {
                 }
 }
 
-vid.onmousewheel = (event) => {
+vid.onwheel = (event) => {
 event.preventDefault();
 event.stopPropagation();
 
-if(event.wheelDelta>0){
-   vid.currentTime += ((event.wheelDelta*vid.duration)/(event.wheelDelta*1001)); // 
+if(event.deltaY>0){
+   vid.currentTime -= ((event.deltaY*vid.duration)/(event.deltaY*1001)); // 
 }
-if (event.wheelDelta<0){
-	vid.currentTime += (event.wheelDelta/800)
+if (event.deltaY<0){
+	vid.currentTime -= (event.deltaY/800)
 }
     }
 
