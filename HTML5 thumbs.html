@@ -102,7 +102,7 @@ $("#thumbs").ready(function() {
 
 video.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
 if (!document.pictureInPictureElement) {
-		 $(window).scrollTop(0);
+		 window.scrollTo(0,0);
 		 scr_swtch=0;
 		 scrl.innerText="Scroll to current thumb";
 		 }
