@@ -1,4 +1,4 @@
-﻿﻿<html> 
+﻿<html> 
 
 <head>
 <script src="jquery-3.4.1.min.js"></script>
@@ -57,7 +57,6 @@ var nowFlag=-1;
 var aseek=0;
 var captions=[];
 var ttmp=0;
-
 var frame_btn=document.getElementById("frames");
 var thumbs=document.getElementById("thumbs");
 var myVdo = document.getElementById("video");
@@ -176,6 +175,25 @@ document.getElementById('txtBx').value=""
 }
 
 
+	
+var checkDur = function() {
+var intr = setInterval(function() {
+	if ((myVdo)&&(myVdo.currentTime>=0)&&(myVdo.duration>=0)){
+	scrl.style.top=(myVdo.clientHeight+27)+'px';
+	loadFlag=true;
+	nowFlag=-1;
+	myVdo.currentTime=0;	
+	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	frame_btn.innerHTML =t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2);
+	intrval=true;
+	clearInterval(intr);
+	}
+}, 150)
+
+}
+
+
+
 function changeValue()
 {
 	curr_thumb=0;
@@ -189,22 +207,14 @@ function changeValue()
   	captions=[];
 	curr_thumb=0;
 	thumbs.innerHTML="";
-  var interval= setInterval(checkDur, 150);
+	checkDur();
 
-function checkDur() {
-	if ((myVdo)&&(myVdo.currentTime>=0)&&(myVdo.duration>=0)){
-		scrl.style.top=(myVdo.clientHeight+27)+'px';
-	loadFlag=true;
-	nowFlag=-1;
-	myVdo.currentTime=0;	
-		curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-		frame_btn.innerHTML =t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2);
-		clearInterval(interval);
-	}
 }
 
-
-  }
+myVdo.ondurationchange= () => {
+  checkDur();
+}
+  
 
 function doThumbs()
 {
