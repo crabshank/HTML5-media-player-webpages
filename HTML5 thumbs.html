@@ -365,7 +365,7 @@ f.appendChild(c);
 ct.innerHTML=format_time;
 f.appendChild(ct);
 captions.push(ct);
-ct.style.cssText+="transform: scale("+0.18*(f.clientWidth/ct.clientWidth)+");";
+ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
 }
   
 }else{
