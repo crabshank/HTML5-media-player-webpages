@@ -18,7 +18,6 @@ color: white;
     font-size: 169%;
     display: inline-table;
     position: absolute;
-    transform: scale(3);
     transform-origin: top left;
     font-family: Microsoft JhengHei UI;
 }
@@ -35,7 +34,7 @@ div#thumbs>figure {
 
 <input type="button" Value="Load Video" onClick="changeValue();">
 <input type="button" Value="Generate Thumbs" onClick="doThumbs();"><br>
-<span id="frames">24</span>
+<span id="frames" title="Scoll here to change number of frames.">24</span>
 
 
 <div style="width:90%; text-align:center;">
@@ -58,6 +57,8 @@ var nowFlag=-1;
 var aseek=0;
 var captions=[];
 var ttmp=0;
+
+var frame_btn=document.getElementById("frames");
 var thumbs=document.getElementById("thumbs");
 var myVdo = document.getElementById("video");
 var scrl= document.getElementById("scroll_curr");
@@ -65,7 +66,8 @@ var scr_swtch=0;
 scrl.style.top=(myVdo.clientHeight+27)+'px';
 
 window.addEventListener('resize', function () {
-thumbs.style.zoom=((100/3)*(myVdo.clientWidth/myVdo.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+let factor= ((100/3)*(myVdo.clientWidth/myVdo.videoWidth));
+thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 scrl.style.top=(myVdo.clientHeight+27)+'px';
 });
 
@@ -139,17 +141,33 @@ if (event.deltaY<0){
   
 });
 
+frame_btn.onwheel= (event) => {
+
+event.preventDefault();
+event.stopPropagation();
+
+if(event.deltaY>0){
+setMinusFrames();
+}
+if (event.deltaY<0){
+setPlusFrames();
+}
+
+}
+
+
+
 	function setPlusFrames() {
 	if (aseek==0){
 			t += 3;
-			document.getElementById("frames").innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(document.getElementById("video").duration/t,2):t;
+			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(document.getElementById("video").duration/t,2):t;
 			}
 	}
 
 	function setMinusFrames() {
 		if (aseek==0){
 		t=(t<6)?3:t-3;
-		document.getElementById("frames").innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(document.getElementById("video").duration/t,2):t;
+		frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(document.getElementById("video").duration/t,2):t;
 		}
 	}
 
@@ -160,14 +178,16 @@ document.getElementById('txtBx').value=""
 
 function changeValue()
 {
+	curr_thumb=0;
 	loadFlag=false;
 	ttmp=0;
 	let txtVal=txtBx.value;
     alert(txtVal);  
     vid.src = txtVal;      
     myVdo.load(); 
-  myVdo.pause();
+	myVdo.pause();
   	captions=[];
+	curr_thumb=0;
 	thumbs.innerHTML="";
   var interval= setInterval(checkDur, 150);
 
@@ -178,7 +198,7 @@ function checkDur() {
 	nowFlag=-1;
 	myVdo.currentTime=0;	
 		curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-		document.getElementById("frames").innerHTML =t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2);
+		frame_btn.innerHTML =t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2);
 		clearInterval(interval);
 	}
 }
@@ -327,17 +347,16 @@ let format_time=formatTime(myVdo.currentTime);
 c.setAttribute('timestamp_fmt', format_time);
 
 ctx.drawImage(myVdo, 0, 0, v_width, v_height);
-
-thumbs.style.zoom=((100/3)*(myVdo.clientWidth/v_width)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+let factor=((100/3)*(myVdo.clientWidth/v_width));
+thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 scrl.style.top=(myVdo.clientHeight+27)+'px';
 thumbs.appendChild(f);
 
 f.appendChild(c);
-
 ct.innerHTML=format_time;
 f.appendChild(ct);
 captions.push(ct);
-
+ct.style.cssText+="transform: scale("+0.18*(f.clientWidth/ct.clientWidth)+");";
 }
   
 }else{
