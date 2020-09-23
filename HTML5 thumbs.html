@@ -1,4 +1,4 @@
-<html> 
+﻿<html> 
 
 <head>
 <script src="jquery-3.4.1.min.js"></script>
@@ -312,28 +312,47 @@ ttmp=0;
    } 
 }
  
- myVdo.onseeked= function() {
- if(aseek==1){  
+function thumbseek(bool){
+	if(bool){
+		 generateThumbnail();
 
-    generateThumbnail();
+		ttmp++;
 
-    ttmp++;
-
-    if (ttmp<done_t) {
-        myVdo.currentTime = ttmp*(myVdo.duration/t);
-    }else {
-		aseek=0;
-		ttmp=0;
-		myVdo.currentTime=0;
-		return;
-    }
-	
-}else{
-	nowFlag=-1;
-return;
+		if (ttmp<done_t) {
+			myVdo.currentTime = ttmp*(myVdo.duration/t);
+		}else {
+			aseek=0;
+			ttmp=0;
+			myVdo.currentTime=0;
+		}
+	}else{
+		nowFlag=-1;
+	}
+}
+ 
+myVdo.onseeking=function(){
+	if((aseek==1)&&(myVdo.readyState>=2)){  
+		thumbseek(true);
+	}else{
+		thumbseek(false);
+	}
 }
 
- }
+myVdo.onwating=function(){
+	if((aseek==1)&&(myVdo.readyState>=2)){  
+		thumbseek(true);
+	}else{
+		thumbseek(false);
+	}
+} 
+
+myVdo.onseeked= function(){
+	if(aseek==1){  
+		thumbseek(true);
+	}else{
+		thumbseek(false);
+	}
+}
  
 function generateThumbnail() {
 
