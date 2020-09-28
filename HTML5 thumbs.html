@@ -1,4 +1,4 @@
-﻿<html> 
+<html> 
 
 <head>
 <script src="jquery-3.4.1.min.js"></script>
@@ -58,6 +58,7 @@ var aseek=0;
 var captions=[];
 var ttmp=0;
 var cap=-1;
+var time_track=-1;
 var frame_btn=document.getElementById("frames");
 var thumbs=document.getElementById("thumbs");
 var myVdo = document.getElementById("video");
@@ -173,25 +174,18 @@ setPlusFrames();
 	}
 
 function clr(){
-document.getElementById('txtBx').value=""
+document.getElementById('txtBx').value="";
 }
 
 
 	
 var checkDur = function() {
-var intr = setInterval(function() {
-	if ((myVdo)&&(myVdo.currentTime>=0)&&(myVdo.duration>=0)){
 	scrl.style.top=(myVdo.clientHeight+27)+'px';
 	loadFlag=true;
 	nowFlag=-1;
 	myVdo.currentTime=0;	
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 	frame_btn.innerHTML =t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2);
-	intrval=true;
-	clearInterval(intr);
-	}
-}, 150)
-
 }
 
 
@@ -214,6 +208,10 @@ function changeValue()
 }
 
 myVdo.ondurationchange= () => {
+  checkDur();
+}
+
+myVdo.onloadedmetadata= () => {
   checkDur();
 }
   
@@ -308,33 +306,38 @@ cap=-1;
  }
 
 myVdo.onloadeddata= function() {
-if (captions.length==0){
-ttmp=0;
+	if (captions.length==0){
+	ttmp=0;
 	thumbs.innerHTML = "";
-   myVdo.currentTime = 0;
-   } 
+	myVdo.currentTime = 0;
+	} 
 }
  
 function thumbseek(bool){
 	if(bool){
-		 generateThumbnail();
-
-		ttmp++;
-
-		if (ttmp<done_t) {
-			myVdo.currentTime = ttmp*(myVdo.duration/t);
-		}else {
-			aseek=0;
-			ttmp=0;
-			myVdo.currentTime=0;
+		if(!((ttmp==0)&&(myVdo.readyState<2))){
+			time_track =ttmp*(myVdo.duration/t);
+			generateThumbnail();
+			ttmp++;
+			if (ttmp<done_t) {
+				myVdo.currentTime = ttmp*(myVdo.duration/t);
+			}else {
+				aseek=0;
+				time_track=-1;
+				ttmp=0;
+				myVdo.currentTime=0;
+			}
 		}
+		 
 	}else{
 		nowFlag=-1;
 	}
+
+
 }
  
 myVdo.onseeking=function(){
-	if((aseek==1)&&(myVdo.readyState>=2)){  
+	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
 		thumbseek(false);
@@ -342,7 +345,7 @@ myVdo.onseeking=function(){
 }
 
 myVdo.onwating=function(){
-	if((aseek==1)&&(myVdo.readyState>=2)){  
+	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
 		thumbseek(false);
@@ -350,7 +353,7 @@ myVdo.onwating=function(){
 } 
 
 myVdo.onseeked= function(){
-	if(aseek==1){  
+	if((aseek==1)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
 		thumbseek(false);
