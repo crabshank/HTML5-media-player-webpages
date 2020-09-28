@@ -104,7 +104,7 @@ $("#thumbs").ready(function() {
 	cap=index;
 	  //console.log($(('#thumbs > figure > canvas')[index]));
 
-video.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
+myVdo.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
 if (!document.pictureInPictureElement) {
 		 window.scrollTo(0,0);
 		 scr_swtch=0;
@@ -112,8 +112,8 @@ if (!document.pictureInPictureElement) {
 		 }
   });
   
-  scrl.onclick=function(){
- if(scr_swtch==0){
+scrl.onclick=function(){
+if(scr_swtch==0){
 $('#thumbs > figure')[curr_thumb].scrollIntoView();
 scr_swtch=1;
 scrl.innerText="Scroll to video";
@@ -122,24 +122,29 @@ window.scrollTo(0,0);
 scr_swtch=0;
 scrl.innerText="Scroll to current thumb";
 }
-  };
+};
   
 
 function skip(event) {
 event=(event.originalEvent)?event.originalEvent:event;
 event.preventDefault();
 event.stopPropagation();
-let vid=document.getElementById("video");
 if(event.deltaY>0){
-   vid.currentTime -= (vid.duration/t)*0.05;
+   myVdo.currentTime -= (myVdo.duration/t)*0.05;
 }
 if (event.deltaY<0){
-	vid.currentTime +=  (vid.duration/t)*0.05;
+	myVdo.currentTime +=  (myVdo.duration/t)*0.05;
 }
 }
 
-  $("#thumbs").on("wheel", "figure",skip);
-  document.getElementById("video").onwheel = skip;
+thumbs.onwheel= (event) => {
+$('#thumbs > figure')[curr_thumb].scrollIntoView();
+skip(event);
+}
+
+myVdo.onwheel= (event) => {
+skip(event);
+}
   
 });
 
