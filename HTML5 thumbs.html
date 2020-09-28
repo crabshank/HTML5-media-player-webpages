@@ -57,6 +57,7 @@ var nowFlag=-1;
 var aseek=0;
 var captions=[];
 var ttmp=0;
+var cap=-1;
 var frame_btn=document.getElementById("frames");
 var thumbs=document.getElementById("thumbs");
 var myVdo = document.getElementById("video");
@@ -99,6 +100,7 @@ $("#thumbs").ready(function() {
   $("#thumbs").on("click", "figure", function() {
     var index = $("figure").index(this);
 	nowFlag=index;
+	cap=index;
 	  //console.log($(('#thumbs > figure > canvas')[index]));
 
 video.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
@@ -243,7 +245,7 @@ curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleS
 	captions[i].style.backgroundColor="#00000099";
 	}
 	
-	let cap=myVdo.currentTime*(done_t)/myVdo.duration;
+	cap=(cap!=-1)?cap:myVdo.currentTime*(done_t)/myVdo.duration;
 	let cap_el=Math.floor(cap);
 	let perc=Math.min(100,Math.max(0,(cap-cap_el)*100)).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
 
@@ -302,6 +304,7 @@ var attr_next=captions[cap_el+1].previousSibling.attributes;
 		
 }
 }
+cap=-1;
  }
 
 myVdo.onloadeddata= function() {
