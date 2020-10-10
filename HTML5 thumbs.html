@@ -1,4 +1,4 @@
-<html> 
+﻿<html> 
 
 <head>
 <script src="jquery-3.4.1.min.js"></script>
@@ -95,7 +95,7 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
 }
 
 	return minutes + secs;
-  }  
+  }
 
 $("#thumbs").ready(function() {
   $("#thumbs").on("click", "figure", function() {
@@ -185,14 +185,15 @@ document.getElementById('txtBx').value="";
 
 	
 var checkDur = function() {
-	scrl.style.top=(myVdo.clientHeight+27)+'px';
+	if(!!isFinite(myVdo.duration)){
 	loadFlag=true;
-	nowFlag=-1;
-	myVdo.currentTime=0;	
-	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	nowFlag=-1;	
 	frame_btn.innerHTML =t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2);
+	}
+	myVdo.currentTime=0;
+	scrl.style.top=(myVdo.clientHeight+27)+'px';
+	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 }
-
 
 
 function changeValue()
