@@ -66,6 +66,19 @@ var scrl= document.getElementById("scroll_curr");
 var scr_swtch=0;
 scrl.style.top=(myVdo.clientHeight+27)+'px';
 
+
+function skip(event) {
+event=(event.originalEvent)?event.originalEvent:event;
+event.preventDefault();
+event.stopPropagation();
+if(event.deltaY>0){
+   myVdo.currentTime -= (myVdo.duration/t)*0.05;
+}
+if (event.deltaY<0){
+	myVdo.currentTime +=  (myVdo.duration/t)*0.05;
+}
+}
+
 window.addEventListener('resize', function () {
 let factor= ((100/3)*(myVdo.clientWidth/myVdo.videoWidth));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
@@ -124,23 +137,6 @@ scrl.innerText="Scroll to current thumb";
 }
 };
   
-
-function skip(event) {
-event=(event.originalEvent)?event.originalEvent:event;
-event.preventDefault();
-event.stopPropagation();
-if(event.deltaY>0){
-   myVdo.currentTime -= (myVdo.duration/t)*0.05;
-}
-if (event.deltaY<0){
-	myVdo.currentTime +=  (myVdo.duration/t)*0.05;
-}
-}
-
-thumbs.onwheel= (event) => {
-$('#thumbs > figure')[curr_thumb].scrollIntoView();
-skip(event);
-}
 
 myVdo.onwheel= (event) => {
 skip(event);
@@ -371,6 +367,13 @@ function generateThumbnail() {
 var f = document.createElement("figure");
 var ct=document.createElement("figcaption");
 var c = document.createElement("canvas");
+
+c.onwheel= (event) => {
+$('#thumbs > figure')[curr_thumb].scrollIntoView();
+skip(event);
+}
+
+
 var ctx = c.getContext("2d");
 
 let v_width = myVdo.videoWidth;
