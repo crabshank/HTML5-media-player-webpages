@@ -81,7 +81,7 @@ if(clck_a==-1){
 	myVdo.playbackRate=16;
 	clck_a = performance.now();
 }else{
-for (let i=myVdo.buffered.length-1; i>=0; i++){	
+for (let i=myVdo.buffered.length-1; i>=0; i--){	
 let t_i=myVdo.buffered.end(i);
 let s_i=myVdo.buffered.start(i);
 if(myVdo.currentTime<=t_i && myVdo.currentTime>=s_i){
