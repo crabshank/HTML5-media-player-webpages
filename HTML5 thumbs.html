@@ -35,7 +35,7 @@ div#thumbs>figure {
 <input type="button" Value="Load Video" onClick="changeValue();">
 <input type="button" Value="Generate Thumbs" onClick="doThumbs();"><br>
 <span id="frames" title="Scoll here to change number of frames.">24</span>
-
+<span style="margin-inline-start: 4.4ch;" title="Maximum speed when speeding through">Max speed: </span><input title="Maximum speed when speeding through" type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch;">
 
 <div style="width:90%; text-align:center;">
 
@@ -65,6 +65,7 @@ var ttmp=0;
 var cap=-1;
 var time_track=-1;
 var frame_btn=document.getElementById("frames");
+var mxsp=document.getElementById("mxs");
 var thumbs=document.getElementById("thumbs");
 var myVdo = document.getElementById("video");
 var scrl= document.getElementById("scroll_curr");
@@ -78,7 +79,7 @@ function calcSp(){
 if(sp_swtch==1 && aseek==0){ 
 if(clck_a==-1){
 	t_a=myVdo.currentTime;
-	myVdo.playbackRate=16;
+	myVdo.playbackRate=mxsp.value;
 	clck_a = performance.now();
 }else{
 for (let i=myVdo.buffered.length-1; i>=0; i--){	
@@ -90,7 +91,7 @@ if(myVdo.currentTime<=t_i && myVdo.currentTime>=s_i){
 
 		clck_b = performance.now();
 		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))/100;
-		myVdo.playbackRate=Math.min(16,Math.max(1,lst));
+		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
 		t_a=t_i;
 		clck_a=performance.now();
 		break;
