@@ -74,6 +74,34 @@ var sp_swtch=0;
 scrl.style.top=(myVdo.clientHeight+27)+'px';
 spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
 
+function calcSp(){
+if(sp_swtch==1 && aseek==0){ 
+if(clck_a==-1){
+	t_a=myVdo.currentTime;
+	myVdo.playbackRate=16;
+	clck_a = performance.now();
+}else{
+for (let i=myVdo.buffered.length-1; i>=0; i++){	
+let t_i=myVdo.buffered.end(i);
+let s_i=myVdo.buffered.start(i);
+if(myVdo.currentTime<=t_i && myVdo.currentTime>=s_i){
+
+	if(t_i>t_a){
+
+		clck_b = performance.now();
+		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))/100;
+		myVdo.playbackRate=Math.min(16,Math.max(1,lst));
+		t_a=t_i;
+		clck_a=performance.now();
+		break;
+	}
+}
+
+}
+}
+
+}
+}
 
 function skip(event) {
 event=(event.originalEvent)?event.originalEvent:event;
@@ -156,9 +184,23 @@ scrl.innerText="Scroll to current thumb";
 }
 };
   
+myVdo.onwheel= (event) => {
+skip(event);
+}
+
+
+myVdo.onprogress= () => {
+if(myVdo.readyState>2){
+calcSp();
+}else{
+myVdo.playbackRate=1;
+}
+}
+
 spb.onclick=function(){
 if(sp_swtch==0){
 sp_swtch=1;
+calcSp();
 spb.innerText="Play at 1x";
 }else{
 myVdo.playbackRate=1;
@@ -166,38 +208,6 @@ sp_swtch=0;
 spb.innerText="Speed through video";
 }
 };
-
-myVdo.onwheel= (event) => {
-skip(event);
-}
-
-
-myVdo.onprogress= () => {
-if(sp_swtch==1 && aseek==0){
-for (let i=myVdo.buffered.length-1; i>=0; i++){
-let t_i=myVdo.buffered.end(i);
-let s_i=myVdo.buffered.start(i);
-if(myVdo.currentTime<=t_i && myVdo.currentTime>=s_i){
-if(clck_a==-1){
-	t_a=t_i;
-	clck_a = performance.now();
-	break;
-}else{
-	if(t_i>t_a){
-		clck_b = performance.now();
-		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))/100;
-		myVdo.playbackRate=(myVdo.readyState<=2)?1:Math.min(16,Math.max(1,lst));
-		t_a=t_i;
-		clck_a=performance.now();
-		break;
-	}
-}
-
-}
-} 
-
-}
-}
 
 
   
