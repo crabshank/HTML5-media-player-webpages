@@ -42,13 +42,18 @@ div#thumbs>figure {
 
 <video id="video" style="width:90%;" controls>
     <source id="VdoSrc" src=""></source>
-</video><button id="scroll_curr" style="position: fixed;">Scroll to current thumb</button>
+</video><button id="scroll_curr" style="position: fixed;">Scroll to current thumb</button><button id="spdt" style="position: fixed;">Speed through video</button>
 
 <div id="currTime" style="position: fixed;bottom: 0.17%;right: 0.73%;color: white;background-color: black;font-size: 185%;font-weight: bold;"></div>
 
 <div id="thumbs"style="margin-block-start: 0.1%;"></div>
 
 <script>
+var clck_a=-1;
+var t_a=0;
+var clck_b=0;
+var m_c=0;
+var m_l=0;
 var curr_thumb=0;
 var t=24;
 var done_t=t;
@@ -63,8 +68,11 @@ var frame_btn=document.getElementById("frames");
 var thumbs=document.getElementById("thumbs");
 var myVdo = document.getElementById("video");
 var scrl= document.getElementById("scroll_curr");
+var spb= document.getElementById("spdt");
 var scr_swtch=0;
+var sp_swtch=0;
 scrl.style.top=(myVdo.clientHeight+27)+'px';
+spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
 
 
 function skip(event) {
@@ -83,6 +91,7 @@ window.addEventListener('resize', function () {
 let factor= ((100/3)*(myVdo.clientWidth/myVdo.videoWidth));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 scrl.style.top=(myVdo.clientHeight+27)+'px';
+spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
 });
 
 var curr  =document.getElementById("currTime");
@@ -136,11 +145,61 @@ scr_swtch=0;
 scrl.innerText="Scroll to current thumb";
 }
 };
+
+spb.onclick=function(){
+if(scr_swtch==0){
+sp_swtch=1;
+}else{
+window.scrollTo(0,0);
+scr_swtch=0;
+scrl.innerText="Scroll to current thumb";
+}
+};
   
+spb.onclick=function(){
+if(sp_swtch==0){
+sp_swtch=1;
+spb.innerText="Play at 1x";
+}else{
+myVdo.playbackRate=1;
+sp_swtch=0;
+spb.innerText="Speed through video";
+}
+};
 
 myVdo.onwheel= (event) => {
 skip(event);
 }
+
+
+myVdo.onprogress= () => {
+if(sp_swtch==1 && aseek==0){
+for (let i=0; i<myVdo.buffered.length; i++){
+let t_i=myVdo.buffered.end(i);
+let s_i=myVdo.buffered.start(i);
+if(myVdo.currentTime<=t_i && myVdo.currentTime>=s_i){
+if(clck_a==-1){
+	t_a=t_i;
+	clck_a = performance.now();
+	break;
+}else{
+	if(t_i>t_a){
+		clck_b = performance.now();
+		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))/100;
+		myVdo.playbackRate=(myVdo.readyState<=2)?1:Math.min(16,Math.max(1,lst));
+		t_a=t_i;
+		clck_a=performance.now();
+		break;
+	}
+}
+
+}
+} 
+
+}
+}
+
+
   
 });
 
@@ -188,6 +247,7 @@ var checkDur = function() {
 	}
 	myVdo.currentTime=0;
 	scrl.style.top=(myVdo.clientHeight+27)+'px';
+	spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 }
 
@@ -217,6 +277,13 @@ myVdo.onloadedmetadata= () => {
   checkDur();
 }
   
+   myVdo.onratechange =function() {
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+ }
+
+ myVdo.ontimeupdate =function() {
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+ }
 
 function doThumbs()
 {
@@ -231,16 +298,12 @@ myVdo.load();
 aseek=1;
 
 curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-
- myVdo.onratechange =function() {
- 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
- } 
  
 
  myVdo.ontimeupdate= function() {
- if(aseek==0){
- 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+ if(aseek==0){
 	for(let i=0;i<captions.length;i++){
 	captions[i].innerText=captions[i].previousSibling.attributes.timestamp_fmt.nodeValue;
 	captions[i].style.backgroundColor="#00000099";
@@ -396,6 +459,7 @@ ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 let factor=((100/3)*(myVdo.clientWidth/v_width));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 scrl.style.top=(myVdo.clientHeight+27)+'px';
+spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
 thumbs.appendChild(f);
 
 f.appendChild(c);
