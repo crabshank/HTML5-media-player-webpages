@@ -106,6 +106,7 @@ if(myVdo.currentTime<=t_i && myVdo.currentTime>=s_i){
 
 function adjRate(){
 myVdo.playbackRate=Math.min(16,Math.max(1,mxsp.valueAsNumber));
+calcSp();
 }
 
 function skip(event) {
@@ -193,12 +194,10 @@ mxsp.onwheel= (event) => {
 	if(event.deltaY>0){
 		mxsp.value=(Math.max(1,mxsp.valueAsNumber-parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7});
 		adjRate();
-		calcSp(video,i);
 	}
 	if (event.deltaY<0){
 		mxsp.value=(Math.min(16,mxsp.valueAsNumber+parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7});
 		adjRate();
-		calcSp(video,i);
 		}
 	}
 	
@@ -231,7 +230,7 @@ myVdo.playbackRate=1;
 spb.onclick=function(){
 if(sp_swtch==0){
 sp_swtch=1;
-calcSp();
+adjRate();
 spb.innerText="Play at 1x";
 }else{
 myVdo.playbackRate=1;
