@@ -319,6 +319,9 @@ myVdo.onloadedmetadata= () => {
   
    myVdo.onratechange =function() {
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	if(myVdo.readyState>2){
+	calcSp();
+	}
  }
 
  myVdo.ontimeupdate =function() {
