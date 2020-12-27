@@ -227,6 +227,14 @@ myVdo.playbackRate=1;
 }
 }
 
+myVdo.onseeked= () => {
+if(myVdo.readyState>2){
+calcSp();
+}else{
+myVdo.playbackRate=1;
+}
+}
+
 spb.onclick=function(){
 if(sp_swtch==0){
 sp_swtch=1;
