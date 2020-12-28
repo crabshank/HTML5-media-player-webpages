@@ -79,7 +79,7 @@ scrl.style.top=(myVdo.clientHeight+27)+'px';
 spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
 
 function calcSp(){
-if(sp_swtch==1 && aseek==0){ 
+if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){ 
 if(clck_a==-1){
 	t_a=myVdo.currentTime;
 	myVdo.playbackRate=mxsp.value;
@@ -108,8 +108,10 @@ if(myVdo.currentTime<=t_i && myVdo.currentTime>=s_i){
 }
 
 function adjRate(){
+if(sp_swtch==1){
 myVdo.playbackRate=Math.min(16,Math.max(1,mxsp.valueAsNumber));
 calcSp();
+}
 }
 
 function skip(event) {
@@ -194,6 +196,9 @@ scrl.innerText="Scroll to current thumb";
 };
   
 mxsp.onwheel= (event) => {
+	event.preventDefault();
+	event.stopPropagation();
+	
 	if(event.deltaY>0){
 		mxsp.value=(Math.max(1,mxsp.valueAsNumber-parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7});
 		adjRate();
