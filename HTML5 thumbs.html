@@ -45,7 +45,7 @@ button, input[type="button"]{
 
 <video id="video" style="width:90%;" controls>
     <source id="VdoSrc" src=""></source>
-</video><button id="scroll_curr" style="position: fixed;">Scroll to current thumb</button><button id="spdt" style="position: fixed;">Speed through video</button>
+</video><button id="scroll_curr" style="position: fixed; margin-left: 1px;">Scroll to current thumb</button><button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button><button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-pictue</button>
 
 <div id="currTime" style="position: fixed;bottom: 0.17%;right: 0.73%;color: white;background-color: black;font-size: 185%;font-weight: bold;"></div>
 
@@ -73,10 +73,12 @@ var thumbs=document.getElementById("thumbs");
 var myVdo = document.getElementById("video");
 var scrl= document.getElementById("scroll_curr");
 var spb= document.getElementById("spdt");
+var pip= document.getElementById("pnp");
 var scr_swtch=0;
 var sp_swtch=0;
 scrl.style.top=(myVdo.clientHeight+27)+'px';
 spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
+pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
 
 function calcSp(){
 if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){ 
@@ -131,6 +133,7 @@ let factor= ((100/3)*(myVdo.clientWidth/myVdo.videoWidth));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 scrl.style.top=(myVdo.clientHeight+27)+'px';
 spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
+pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
 });
 
 var curr  =document.getElementById("currTime");
@@ -185,16 +188,6 @@ scrl.innerText="Scroll to current thumb";
 }
 };
 
-spb.onclick=function(){
-if(scr_swtch==0){
-sp_swtch=1;
-}else{
-window.scrollTo(0,0);
-scr_swtch=0;
-scrl.innerText="Scroll to current thumb";
-}
-};
-  
 mxsp.onwheel= (event) => {
 	event.preventDefault();
 	event.stopPropagation();
@@ -255,6 +248,16 @@ spb.innerText="Speed through video";
 }
 };
 
+pip.onclick=function(){
+if (document.pictureInPictureElement) {
+document.exitPictureInPicture();
+} else {
+if (document.pictureInPictureEnabled) {
+myVdo.requestPictureInPicture();
+}
+}
+};
+
 
   
 });
@@ -304,6 +307,7 @@ var checkDur = function() {
 	myVdo.currentTime=0;
 	scrl.style.top=(myVdo.clientHeight+27)+'px';
 	spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
+	pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 }
 
@@ -519,6 +523,7 @@ let factor=((100/3)*(myVdo.clientWidth/v_width));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 scrl.style.top=(myVdo.clientHeight+27)+'px';
 spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
+pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
 thumbs.appendChild(f);
 
 f.appendChild(c);
