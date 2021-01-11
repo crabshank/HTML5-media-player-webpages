@@ -55,6 +55,7 @@ button, input[type="button"]{
 var clck_a=-1;
 var t_a=0;
 var clck_b=0;
+var skd=false;
 var m_c=0;
 var m_l=0;
 var curr_thumb=0;
@@ -83,23 +84,23 @@ pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
 function calcSp(){
 if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){ 
 if(clck_a==-1){
-	t_a=myVdo.currentTime;
-	myVdo.playbackRate=mxsp.value;
+		t_a=myVdo.currentTime;
 	clck_a = performance.now();
 }else{
 for (let i=myVdo.buffered.length-1; i>=0; i--){	
+clck_b = performance.now();
 let t_i=myVdo.buffered.end(i);
 let s_i=myVdo.buffered.start(i);
-if(myVdo.currentTime<=t_i && myVdo.currentTime>=s_i){
+let c_i=myVdo.currentTime;
+if(c_i<=t_i && c_i>=s_i){
 
 	if(t_i>t_a){
-
-		clck_b = performance.now();
 		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))*0.01;
 		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
 		t_a=t_i;
+		skd=(skd)?false:skd;
+		i=0;
 		clck_a=performance.now();
-		break;
 	}
 }
 
@@ -112,7 +113,9 @@ if(myVdo.currentTime<=t_i && myVdo.currentTime>=s_i){
 function adjRate(){
 if(sp_swtch==1){
 myVdo.playbackRate=Math.min(16,Math.max(1,mxsp.valueAsNumber));
+if(!skd){
 calcSp();
+}
 }
 }
 
@@ -228,7 +231,20 @@ myVdo.playbackRate=1;
 }
 }
 
+myVdo.onwaiting= () => {
+myVdo.playbackRate=1;
+}
+
 myVdo.onseeked= () => {
+skd=true;
+if(myVdo.readyState>2){
+calcSp();
+}else{
+myVdo.playbackRate=1;
+}
+}
+
+myVdo.onplay= () => {
 if(myVdo.readyState>2){
 calcSp();
 }else{
@@ -339,7 +355,7 @@ myVdo.onloadedmetadata= () => {
   
    myVdo.onratechange =function() {
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-	if(myVdo.readyState>2){
+	if(myVdo.readyState>2 && !skd){
 	calcSp();
 	}
  }
