@@ -56,7 +56,6 @@ var clck_a=-1;
 var t_a=0;
 var clck_b=0;
 var skd=false;
-var neg=0;
 var m_c=0;
 var m_l=0;
 var curr_thumb=0;
@@ -97,17 +96,10 @@ if(c_i<=t_i && c_i>=s_i){
 
 	if(t_i>t_a){
 		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))*0.01;
-		if(neg>0){
-		let rate=Math.min(mxsp.value,Math.max(1,lst-neg));
-		neg=(rate==1)?1-lst+neg:0;
-		myVdo.playbackRate=rate;
-		}else{
-		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
-		}
-		t_a=t_i;
-		neg=(lst<1)?neg+1-lst:0;
 		skd=(skd)?false:skd;
+		t_a=t_i;
 		i=0;
+		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
 		clck_a=performance.now();
 	}
 }
