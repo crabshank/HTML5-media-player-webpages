@@ -45,7 +45,7 @@ button, input[type="button"]{
 
 <video id="video" style="width:90%;" controls>
     <source id="VdoSrc" src=""></source>
-</video><button id="scroll_curr" style="position: fixed; margin-left: 1px;">Scroll to current thumb</button><button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button><button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-pictue</button>
+</video><button id="scroll_curr" style="position: fixed; margin-left: 1px;">Scroll to video</button><button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button><button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-pictue</button>
 
 <div id="currTime" style="position: fixed;bottom: 0.17%;right: 0.73%;color: white;background-color: black;font-size: 185%;font-weight: bold;"></div>
 
@@ -76,7 +76,7 @@ var myVdo = document.getElementById("video");
 var scrl= document.getElementById("scroll_curr");
 var spb= document.getElementById("spdt");
 var pip= document.getElementById("pnp");
-var scr_swtch=0;
+var scr_swtch=2;
 var sp_swtch=0;
 scrl.style.top=(myVdo.clientHeight+27)+'px';
 spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
@@ -176,12 +176,13 @@ myVdo.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attribu
 if (!document.pictureInPictureElement) {
 		 window.scrollTo(0,0);
 		 scr_swtch=0;
-		 scrl.innerText="Scroll to current thumb";
 		 }
   });
   
 scrl.onclick=function(){
-if(scr_swtch==0){
+if(scr_swtch==2){
+window.scrollTo(0,0);
+}else if(scr_swtch==0){
 $('#thumbs > figure')[curr_thumb].scrollIntoView();
 scr_swtch=1;
 scrl.innerText="Scroll to video";
@@ -344,6 +345,7 @@ function changeValue()
   	captions=[];
 	curr_thumb=0;
 	thumbs.innerHTML="";
+	scr_swtch=2;
 	checkDur();
 
 }
@@ -484,6 +486,9 @@ function thumbseek(bool){
 				time_track=-1;
 				ttmp=0;
 				myVdo.currentTime=0;
+				scr_swtch=0;
+				scrl.innerText='Scroll to current thumb';
+				window.scrollTo(0,0);
 			}
 		}
 		 
