@@ -68,6 +68,7 @@ var captions=[];
 var ttmp=0;
 var cap=-1;
 var time_track=-1;
+var tTrkFlg=false;
 var frame_btn=document.getElementById("frames");
 var mxsp=document.getElementById("mxs");
 var thumbs=document.getElementById("thumbs");
@@ -324,7 +325,9 @@ var checkDur = function() {
 	scrl.style.top=(myVdo.clientHeight+27)+'px';
 	spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
 	pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
+	if(!tTrkFlg){
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	}
 }
 
 
@@ -354,14 +357,18 @@ myVdo.onloadedmetadata= () => {
 }
   
    myVdo.onratechange =function() {
+	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	}
 	if(myVdo.readyState>2 && !skd){
 	calcSp();
 	}
  }
 
  myVdo.ontimeupdate =function() {
+	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	}
  }
 
 function doThumbs()
@@ -376,12 +383,14 @@ myVdo.load();
 
 aseek=1;
 
+if(!tTrkFlg){
 curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
- 
+}
 
  myVdo.ontimeupdate= function() {
-
+	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	}
  if(aseek==0){
 	for(let i=0;i<captions.length;i++){
 	captions[i].innerText=captions[i].previousSibling.attributes.timestamp_fmt.nodeValue;
@@ -466,10 +475,12 @@ function thumbseek(bool){
 			generateThumbnail();
 			ttmp++;
 			if (ttmp<done_t) {
+			tTrkFlg=true;
 			curr.innerText= formatTime(myVdo.currentTime)+"\n"+ttmp+"/"+done_t;
 			myVdo.currentTime = ttmp*(myVdo.duration/t);
 			}else {
 				aseek=0;
+				tTrkFlg=false;
 				time_track=-1;
 				ttmp=0;
 				myVdo.currentTime=0;
