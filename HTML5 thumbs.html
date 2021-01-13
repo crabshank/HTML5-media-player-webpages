@@ -99,9 +99,9 @@ if(c_i<=t_i && c_i>=s_i){
 		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))*0.01;
 		skd=(skd)?false:skd;
 		t_a=t_i;
-		i=0;
 		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
 		clck_a=performance.now();
+		break;
 	}
 }
 
