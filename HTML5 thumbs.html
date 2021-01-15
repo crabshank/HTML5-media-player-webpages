@@ -28,6 +28,18 @@ div#thumbs>figure {
 button, input[type="button"]{
 	background-color: buttonface;
 }
+
+body{
+background-color: #333;
+}
+
+span{
+color: #dfdfdf;
+}
+
+input::-webkit-textfield-decoration-container {
+    background: buttonface;
+}
 </style>
 
 <button onclick="setPlusFrames()" type="button">+ 3 thumbs</button>
@@ -38,7 +50,7 @@ button, input[type="button"]{
 <input type="button" Value="Load Video" onClick="changeValue();">
 <input type="button" Value="Generate Thumbs" onClick="doThumbs();"><br>
 <span id="frames" title="Scroll here to change number of frames.">24</span>
-<span style="margin-inline-start: 4.4ch;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span><input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch;"></input>
+<span style="margin-inline-start: 4.4ch;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span><input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch; background-color: buttonface; border-width: 0px;"></input>
 
 <div style="width:90%; text-align:center;">
 
@@ -47,7 +59,7 @@ button, input[type="button"]{
     <source id="VdoSrc" src=""></source>
 </video><button id="scroll_curr" style="position: fixed; margin-left: 1px;">Scroll to video</button><button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button><button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-pictue</button>
 
-<div id="currTime" style="position: fixed;bottom: 0.17%;right: 0.73%;color: white;background-color: black;font-size: 185%;font-weight: bold;"></div>
+<div id="currTime" style="position: fixed; bottom: 0.17%; right: 0.73%; color: white; background-color: black; font-size: 185%; font-weight: bold;"></div>
 
 <div id="thumbs"style="margin-block-start: 0.1%;"></div>
 
