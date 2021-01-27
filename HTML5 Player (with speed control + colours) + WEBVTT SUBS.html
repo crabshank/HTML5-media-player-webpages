@@ -127,7 +127,7 @@ console.log(s.track);
 $("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + " ms.");
 					
 					s.track.oncuechange = function () {
-						if (s.origTrack == 0)
+						if ((s.origTrack == 0 || s.origTrack.text.length<s.track.track.cues.length) && (s.track!=0))
 						{
 							balanceSubs();
 
@@ -333,6 +333,8 @@ s.origTrack = 0;
 
 	function balanceSubs()
 	{
+		if (s.track!=0)
+		{
 		if (s.blcd !== 1)
 		{
 			s.track.track.mode = "hidden";
@@ -388,7 +390,7 @@ s.origTrack = 0;
 			s.blcd = 1;
 
 		}
-
+		}
 	}
 
 		function colour_subs(str)
