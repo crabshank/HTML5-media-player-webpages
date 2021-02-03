@@ -52,12 +52,12 @@ input::-webkit-textfield-decoration-container {
 <span id="frames" title="Scroll here to change number of frames.">24</span>
 <span style="margin-inline-start: 4.4ch;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span><input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch; background-color: buttonface; border-width: 0px;"></input>
 
-<div style="width:90%; text-align:center;">
+<div style="width:90%; text-align:center; margin-left: -4.72%;">
 
 
 <video id="video" style="width:90%;" controls>
     <source id="VdoSrc" src=""></source>
-</video><button id="scroll_curr" style="position: fixed; margin-left: 1px;">Scroll to video</button><button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button><button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-pictue</button>
+</video><button id="scroll_curr" style="position: fixed; margin-left: 1px; visibility: hidden;">Scroll to current thumb</button><button id="scroll_vid" style="position: fixed; margin-left: 1px;">Scroll to video</button><button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button><button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-pictue</button>
 
 <div id="currTime" style="position: fixed; bottom: 0.17%; right: 0.73%; color: white; background-color: black; font-size: 185%; font-weight: bold;"></div>
 
@@ -84,15 +84,17 @@ var tTrkFlg=false;
 var frame_btn=document.getElementById("frames");
 var mxsp=document.getElementById("mxs");
 var thumbs=document.getElementById("thumbs");
-var myVdo = document.getElementById("video");
+var myVdo = document.getElementById("video");	
 var scrl= document.getElementById("scroll_curr");
+var scrv= document.getElementById("scroll_vid");
 var spb= document.getElementById("spdt");
 var pip= document.getElementById("pnp");
-var scr_swtch=2;
+var scr_swtch=1;
 var sp_swtch=0;
-scrl.style.top=(myVdo.clientHeight+27)+'px';
+scrv.style.top=(myVdo.clientHeight+27)+'px';
+scrl.style.top=(scrv.getBoundingClientRect().height+scrv.getBoundingClientRect().top+0.5)+'px';
 spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
-pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
+pip.style.top=(scr_swtch==1)?(myVdo.clientHeight+28+spb.offsetHeight)+'px':(myVdo.clientHeight+28+spb.offsetHeight+scrv.offsetHeight)+'px';
 
 function calcSp(){
 if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){ 
@@ -148,9 +150,10 @@ if (event.deltaY<0){
 window.addEventListener('resize', function () {
 let factor= ((100/3)*(myVdo.clientWidth/myVdo.videoWidth));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
-scrl.style.top=(myVdo.clientHeight+27)+'px';
+scrv.style.top=(myVdo.clientHeight+27)+'px';
+scrl.style.top=(scrv.getBoundingClientRect().height+scrv.getBoundingClientRect().top+0.5)+'px';
 spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
-pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
+pip.style.top=(scr_swtch==1)?(myVdo.clientHeight+28+spb.offsetHeight)+'px':(myVdo.clientHeight+28+spb.offsetHeight+scrv.offsetHeight)+'px';
 });
 
 var curr  =document.getElementById("currTime");
@@ -188,22 +191,17 @@ $("#thumbs").ready(function() {
 myVdo.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
 if (!document.pictureInPictureElement) {
 		 window.scrollTo(0,0);
-		 scr_swtch=0;
 		 }
   });
   
 scrl.onclick=function(){
-if(scr_swtch==2){
-window.scrollTo(0,0);
-}else if(scr_swtch==0){
+if(scr_swtch==0){
 $('#thumbs > figure')[curr_thumb].scrollIntoView();
-scr_swtch=1;
-scrl.innerText="Scroll to video";
-}else{
-window.scrollTo(0,0);
-scr_swtch=0;
-scrl.innerText="Scroll to current thumb";
 }
+};
+
+scrv.onclick=function(){
+window.scrollTo(0,0);
 };
 
 mxsp.onwheel= (event) => {
@@ -336,9 +334,10 @@ var checkDur = function() {
 	frame_btn.innerHTML =t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2);
 	}
 	myVdo.currentTime=0;
-	scrl.style.top=(myVdo.clientHeight+27)+'px';
+	scrv.style.top=(myVdo.clientHeight+27)+'px';
+	scrl.style.top=(scrv.getBoundingClientRect().height+scrv.getBoundingClientRect().top+0.5)+'px';
 	spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
-	pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
+	pip.style.top=(scr_swtch==1)?(myVdo.clientHeight+28+spb.offsetHeight)+'px':(myVdo.clientHeight+28+spb.offsetHeight+scrv.offsetHeight)+'px';
 	if(!tTrkFlg){
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 	}
@@ -358,7 +357,9 @@ function changeValue()
   	captions=[];
 	curr_thumb=0;
 	thumbs.innerHTML="";
-	scr_swtch=2;
+	scr_swtch=1;
+	scrl.style.visibility='hidden';
+	pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
 	checkDur();
 
 }
@@ -500,7 +501,8 @@ function thumbseek(bool){
 				ttmp=0;
 				myVdo.currentTime=0;
 				scr_swtch=0;
-				scrl.innerText='Scroll to current thumb';
+				pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight+scrv.offsetHeight)+'px';
+				scrl.style.visibility='';
 				window.scrollTo(0,0);
 			}
 		}
@@ -566,9 +568,10 @@ c.setAttribute('timestamp_fmt', format_time);
 ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 let factor=((100/3)*(myVdo.clientWidth/v_width));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
-scrl.style.top=(myVdo.clientHeight+27)+'px';
+scrv.style.top=(myVdo.clientHeight+27)+'px';
+scrl.style.top=(scrv.getBoundingClientRect().height+scrv.getBoundingClientRect().top+0.5)+'px';
 spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
-pip.style.top=(myVdo.clientHeight+28+spb.offsetHeight)+'px';
+pip.style.top=(scr_swtch==1)?(myVdo.clientHeight+28+spb.offsetHeight)+'px':(myVdo.clientHeight+28+spb.offsetHeight+scrv.offsetHeight)+'px';
 thumbs.appendChild(f);
 
 f.appendChild(c);
