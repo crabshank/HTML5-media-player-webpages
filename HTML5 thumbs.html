@@ -544,7 +544,7 @@ var f = document.createElement("figure");
 var ct=document.createElement("figcaption");
 var c = document.createElement("canvas");
 
-c.onwheel= (event) => {
+f.onwheel= (event) => {
 $('#thumbs > figure')[curr_thumb].scrollIntoView();
 skip(event);
 }
