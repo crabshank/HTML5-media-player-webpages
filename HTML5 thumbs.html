@@ -97,7 +97,7 @@ spb.style.top=(myVdo.clientHeight+25-scrl.offsetHeight)+'px';
 pip.style.top=(scr_swtch==1)?(myVdo.clientHeight+28+spb.offsetHeight)+'px':(myVdo.clientHeight+28+spb.offsetHeight+scrv.offsetHeight)+'px';
 
 function calcSp(){
-if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){ 
+if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1 && !myVdo.paused){ 
 if(clck_a==-1){
 		t_a=myVdo.currentTime;
 	clck_a = performance.now();
