@@ -67,7 +67,6 @@ input::-webkit-textfield-decoration-container {
 var clck_a=-1;
 var t_a=0;
 var clck_b=0;
-var skd=false;
 var m_c=0;
 var m_l=0;
 var curr_thumb=0;
@@ -110,7 +109,6 @@ let s_i=myVdo.buffered.start(i);
 if(c_i<=t_i && c_i>=s_i){
 	if(t_i>t_a){
 		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))*0.01;
-		skd=(skd)?false:skd;
 		t_a=t_i;
 		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
 		clck_a=performance.now();
@@ -133,9 +131,7 @@ if(c_i<=t_i && c_i>=s_i){
 function adjRate(){
 if(sp_swtch==1){
 myVdo.playbackRate=Math.min(16,Math.max(1,mxsp.valueAsNumber));
-if(!skd){
 calcSp();
-}
 }
 }
 
@@ -250,7 +246,6 @@ myVdo.playbackRate=1;
 
 
 myVdo.onplay= () => {
-skd=(skd)?false:skd;
 if(myVdo.readyState>2){
 calcSp();
 }else{
@@ -258,13 +253,9 @@ myVdo.playbackRate=1;
 }
 }
 
-myVdo.onseeking= () => {
-skd=true;
-}
 
 myVdo.onseeked= () => {
 t_a=myVdo.currentTime;
-skd=true;
 if(myVdo.readyState>2){
 calcSp();
 }else{
@@ -389,7 +380,7 @@ myVdo.onloadedmetadata= () => {
 	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 	}
-	if(myVdo.readyState>2 && !skd){
+	if(myVdo.readyState>2){
 	calcSp();
 	}
  }
@@ -523,7 +514,6 @@ function thumbseek(bool){
 }
  
 myVdo.onseeking=function(){
-skd=true;
 	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
@@ -542,7 +532,6 @@ myVdo.playbackRate=1;
 
 myVdo.onseeked= function(){
 t_a=myVdo.currentTime;
-skd=true;
 if(myVdo.readyState>2){
 calcSp();
 }else{
