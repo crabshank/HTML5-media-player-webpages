@@ -44,8 +44,9 @@ input::-webkit-textfield-decoration-container {
 
 <button onclick="setPlusFrames()" type="button">+ 3 thumbs</button>
 <button onclick="setMinusFrames()" type="button">- 3 thumbs</button>
+<button onclick="setEveryFrames()" type="button" id="every" style="display: none;"></button>
 <button onclick="clr()" type="button">Clear</button>
-<input type="text" size="105" name="txtBx" id="txtBx">
+<input type="text" size="94" name="txtBx" id="txtBx">
 
 <input type="button" Value="Load Video" onClick="changeValue();">
 <input type="button" Value="Generate Thumbs" onClick="doThumbs();"><br>
@@ -80,6 +81,7 @@ var ttmp=0;
 var cap=-1;
 var time_track=-1;
 var tTrkFlg=false;
+var ev_t=-1;
 var frame_btn=document.getElementById("frames");
 var mxsp=document.getElementById("mxs");
 var thumbs=document.getElementById("thumbs");
@@ -88,6 +90,7 @@ var scrl= document.getElementById("scroll_curr");
 var scrv= document.getElementById("scroll_vid");
 var spb= document.getElementById("spdt");
 var pip= document.getElementById("pnp");
+var evry= document.getElementById("every");
 var scr_swtch=1;
 var sp_swtch=0;
 scrv.style.top=(myVdo.clientHeight+27)+'px';
@@ -314,14 +317,44 @@ setPlusFrames();
 	function setPlusFrames() {
 	if (aseek==0){
 			t += 3;
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(document.getElementById("video").duration/t,2):t;
+			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+			if(ev_t>-1 && t!=ev_t){
+				evry.style.display='initial';
+			}else{
+				evry.style.display='none';
+			}
 			}
 	}
 
 	function setMinusFrames() {
 		if (aseek==0){
 		t=(t<6)?3:t-3;
-		frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(document.getElementById("video").duration/t,2):t;
+		frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+			if(ev_t>-1 && t!=ev_t){
+				evry.style.display='initial';
+			}else{
+				evry.style.display='none';
+			}
+		}
+	}	
+	
+	function setEveryFrames() {
+		if (aseek==0){
+			if(myVdo.duration>=270){
+			t=Math.round(Math.ceil(myVdo.duration/90)*3);
+			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;			
+			}else if(myVdo.duration<4.5){
+				t=Math.round(Math.Max(1,Math.floor((myVdo.duration*2)/3))*3);
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+			}else{
+			t=9;
+			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+			}
+			if(ev_t>-1 && t!=ev_t){
+				evry.style.display='initial';
+			}else{
+				evry.style.display='none';
+			}
 		}
 	}
 
@@ -335,7 +368,20 @@ var checkDur = function() {
 	if(!!isFinite(myVdo.duration)){
 	loadFlag=true;
 	nowFlag=-1;	
-	frame_btn.innerHTML =t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2);
+			if(myVdo.duration>=270){
+			t=Math.round(Math.ceil(myVdo.duration/90)*3);
+			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+			evry.innerText='At least every 30 secs';
+			}else if(myVdo.duration<4.5){
+				t=Math.round(Math.Max(1,Math.floor((myVdo.duration*2)/3))*3);
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+				evry.innerText='At most every 0.5 secs';
+			}else{
+			let t=9;
+			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+			evry.innerText='9 frames';
+			}
+			ev_t=t;
 	}
 	myVdo.currentTime=0;
 	scrv.style.top=(myVdo.clientHeight+27)+'px';
