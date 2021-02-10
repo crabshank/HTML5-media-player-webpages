@@ -115,6 +115,10 @@ if(c_i<=t_i && c_i>=s_i){
 		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
 		clck_a=performance.now();
 		break;
+	}else{
+		t_a=c_i
+		clck_a=performance.now();
+		break;
 	}
 }else if(c_i>t_i){
 	break;
@@ -244,11 +248,22 @@ myVdo.playbackRate=1;
 }
 }
 
-myVdo.onwaiting= () => {
+
+myVdo.onplay= () => {
+skd=(skd)?false:skd;
+if(myVdo.readyState>2){
+calcSp();
+}else{
 myVdo.playbackRate=1;
+}
+}
+
+myVdo.onseeking= () => {
+skd=true;
 }
 
 myVdo.onseeked= () => {
+t_a=myVdo.currentTime;
 skd=true;
 if(myVdo.readyState>2){
 calcSp();
@@ -257,12 +272,10 @@ myVdo.playbackRate=1;
 }
 }
 
-myVdo.onplay= () => {
-if(myVdo.readyState>2){
-calcSp();
-}else{
-myVdo.playbackRate=1;
-}
+ myVdo.ontimeupdate= () => {
+	if(!tTrkFlg){
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	}
 }
 
 spb.onclick=function(){
@@ -381,11 +394,6 @@ myVdo.onloadedmetadata= () => {
 	}
  }
 
- myVdo.ontimeupdate =function() {
-	if(!tTrkFlg){
- 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-	}
- }
 
 function doThumbs()
 {
@@ -403,7 +411,7 @@ if(!tTrkFlg){
 curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 }
 
- myVdo.ontimeupdate= function() {
+ myVdo.ontimeupdate= () => {
 	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 	}
@@ -515,6 +523,7 @@ function thumbseek(bool){
 }
  
 myVdo.onseeking=function(){
+skd=true;
 	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
@@ -523,6 +532,7 @@ myVdo.onseeking=function(){
 }
 
 myVdo.onwating=function(){
+myVdo.playbackRate=1;
 	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
@@ -531,6 +541,14 @@ myVdo.onwating=function(){
 } 
 
 myVdo.onseeked= function(){
+t_a=myVdo.currentTime;
+skd=true;
+if(myVdo.readyState>2){
+calcSp();
+}else{
+myVdo.playbackRate=1;
+}
+
 	if((aseek==1)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
