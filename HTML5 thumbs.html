@@ -368,6 +368,7 @@ var checkDur = function() {
 	if(!!isFinite(myVdo.duration)){
 	loadFlag=true;
 	nowFlag=-1;	
+			if(ev_t==-1){
 			if(myVdo.duration>=270){
 			t=Math.round(Math.ceil(myVdo.duration/90)*3);
 			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
@@ -382,6 +383,7 @@ var checkDur = function() {
 			evry.innerText='9 frames';
 			}
 			ev_t=t;
+			}
 	}
 	myVdo.currentTime=0;
 	scrv.style.top=(myVdo.clientHeight+27)+'px';
@@ -399,6 +401,7 @@ function changeValue()
 	curr_thumb=0;
 	loadFlag=false;
 	ttmp=0;
+	ev_t=-1;
 	let txtVal=txtBx.value;
     alert(txtVal);  
     vid.src = txtVal;      
