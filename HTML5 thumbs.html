@@ -114,13 +114,11 @@ if(c_i<=t_i && c_i>=s_i){
 		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))*0.01;
 		t_a=t_i;
 		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
-		clck_a=performance.now();
-		break;
 	}else{
 		t_a=c_i
-		clck_a=performance.now();
-		break;
 	}
+	clck_a=performance.now();
+	break;
 }else if(c_i>t_i){
 	break;
 }
