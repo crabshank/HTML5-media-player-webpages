@@ -117,7 +117,7 @@ var vid = document.getElementById('VdoSrc');
 
 
 function pgBar(ix,ths,ev,attr,nxt){
-			if(ev.buttons>0 && window.getComputedStyle(progresses[ix]).display!=='none'){
+			if(ev.buttons>0){
 			ev.preventDefault();
 			ev.stopPropagation();
 			nowFlag=ix;
