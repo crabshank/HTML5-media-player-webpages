@@ -42,6 +42,19 @@ color: #dfdfdf;
 input::-webkit-textfield-decoration-container {
     background: buttonface;
 }
+
+progress {
+    width: inherit;
+    position: absolute;
+	border-radius: 0;
+    height: 0.9em;
+}
+progress::-webkit-progress-value {
+    background-color: #00ffff8f;
+}
+progress::-webkit-progress-bar {
+    background-color: #8080808f;
+}
 </style>
 
 <button onclick="setPlusFrames()" type="button">+ 3 thumbs</button>
@@ -79,11 +92,15 @@ var loadFlag=false;
 var nowFlag=-1;
 var aseek=0;
 var captions=[];
+var progresses=[];
 var ttmp=0;
 var cap=-1;
+var cap_el;
 var time_track=-1;
 var tTrkFlg=false;
 var ev_t=-1;
+var perc_r;
+var perc;
 var frame_btn=document.getElementById("frames");
 var mxsp=document.getElementById("mxs");
 var thumbs=document.getElementById("thumbs");
@@ -97,6 +114,24 @@ var sp_swtch=0;
 var curr  =document.getElementById("currTime");
 var txtBx = document.getElementById('txtBx');
 var vid = document.getElementById('VdoSrc');
+
+
+function pgBar(ix,ths,ev,attr,nxt){
+			if(ev.buttons>0 && window.getComputedStyle(progresses[ix]).display!=='none'){
+			ev.preventDefault();
+			ev.stopPropagation();
+			nowFlag=ix;
+			let cur=parseFloat(attr.timestamp.nodeValue);
+			let rct=ths.getBoundingClientRect();
+			let fct=parseFloat(ths.parentElement.parentElement.parentElement.style.zoom)*0.01;
+			 progresses[ix].value=(ev.offsetX / ((rct.right-rct.left)*fct));
+			 myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
+			 curr_thumb=ix;
+			 }
+}
+			
+			
+			
 
 function shiftBtns(bool){
 	pip.style.top=Math.min(curr.getBoundingClientRect().top-23,myVdo.clientHeight)+'px';
@@ -190,6 +225,7 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
 $("#thumbs").ready(function() {
   $("#thumbs").on("click", "figure", function() {
     var index = $("figure").index(this);
+	if(window.getComputedStyle(progresses[index]).display==='none'){
 	nowFlag=index;
 	cap=index;
 	  //console.log($(('#thumbs > figure > canvas')[index]));
@@ -198,6 +234,7 @@ myVdo.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attribu
 if (!document.pictureInPictureElement) {
 		 window.scrollTo(0,0);
 		 }
+	}
   });
   
 scrl.onclick=function(){
@@ -455,65 +492,125 @@ curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleS
 	}
  if(aseek==0){
 	for(let i=0;i<captions.length;i++){
-	captions[i].innerText=captions[i].previousSibling.attributes.timestamp_fmt.nodeValue;
+	captions[i].style.display='inline-table';
+	captions[i].innerText=captions[i].parentElement.previousSibling.attributes.timestamp_fmt.nodeValue;
 	captions[i].style.backgroundColor="#00000099";
 	}
 	
+		for(let i=0;i<progresses.length;i++){
+		progresses[i].style.display='none';
+		}
+		
 	cap=(cap!=-1)?cap:myVdo.currentTime*(done_t)/myVdo.duration;
-	let cap_el=Math.floor(cap);
-	let perc=Math.min(100,Math.max(0,(cap-cap_el)*100)).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+	cap_el=Math.floor(cap);
+	perc_r=Math.min(1,Math.max(0,cap-cap_el));
+	perc=(perc_r*100).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
 
 	
 if(captions.length==done_t){
 
+
+
+
 if (cap_el<captions.length){
-var attr=captions[cap_el].previousSibling.attributes;
+var attr=captions[cap_el].parentElement.previousSibling.attributes;
 }else if (cap_el>=captions.length){
-var attr=captions[captions.length-1].previousSibling.attributes;
+var attr=captions[captions.length-1].parentElement.previousSibling.attributes;
 }
 
 if(nowFlag>-1){
-var attr_now=captions[nowFlag].previousSibling.attributes;
+var attr_now=captions[nowFlag].parentElement.previousSibling.attributes;
 }
 
 if (cap_el+1<captions.length){
-var attr_next=captions[cap_el+1].previousSibling.attributes;
+var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 	if(nowFlag>-1){
-			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[nowFlag].style.display="none";
+			progresses[nowFlag].style.display="";
+			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
-			captions[nowFlag].style.backgroundColor="#0004ff99";
+			captions[nowFlag].style.backgroundColor="#0004ff99";;
+			
+			progresses[nowFlag].value=perc_r;
+			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(nowFlag,progresses[nowFlag],e,attr,attr_next.timestamp.nodeValue);
+			}
+			
 	}else if (cap==cap_el){
-			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[cap_el].style.display="none";
+			progresses[cap_el].style.display="";
+			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#0004ff99";
+			progresses[cap_el].value=perc_r;
+			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
+			}
 	}else{
 		var until=(cap_el<captions.length)?Math.max(0,attr_next.timestamp.nodeValue-myVdo.currentTime):Math.max(0,myVdo.duration-myVdo.currentTime);
 		until=formatTime(until,1);
 			captions[cap_el+1].innerText=attr_next.timestamp_fmt.nodeValue+" (NEXT) ["+until+"]";
-			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			captions[cap_el].style.display="none";
+			progresses[cap_el].style.display="";
+			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#006115c7";
+			progresses[cap_el].value=perc_r;
+			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
+			}
 	}
 }else{
 
 	if(nowFlag>-1){
-			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[nowFlag].style.display="none";
+			progresses[nowFlag].style.display="";
+			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
+					progresses[nowFlag].value=perc_r;
+			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(nowFlag,progresses[nowFlag],e,attr,attr_next.timestamp.nodeValue);
+			}
 	}else if (cap==cap_el){
 		if(cap_el>=captions.length){
-			captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
+			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
+			captions[captions.length-1].style.display="none";
+			progresses[captions.length-1].style.display="";
+			progresses[captions.length-1].title=perc+"%";
 			curr_thumb=captions.length-1;
-			captions[captions.length-1].style.backgroundColor="#006115c7";
+			captions[captions.length-1].style.backgroundColor="#006115c7";	
+			progresses[captions.length-1].value=perc_r;
+			captions[captions.length-1].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(captions.length-1,progresses[captions.length-1].value,e,attr,myVdo.duration);
+			}
 		}else{
-		captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+		//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+		captions[cap_el].style.display="none";
+		progresses[cap_el].style.display="";
+		progresses[cap_el].title=perc+"%";
 		curr_thumb=cap_el;
 		captions[cap_el].style.backgroundColor="#0004ff99";
+		progresses[cap_el].value=perc_r;
+			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(cap_el,progresses[cap_el],e,attr,myVdo.duration);
+			}
 		}
 	}else{
-			captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			captions[captions.length-1].style.display="none";
+			progresses[captions.length-1].style.display="";
+			progresses[captions.length-1].title=perc+"%";
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";
+			progresses[captions.length-1].value=perc_r;
+			captions[captions.length-1].parentElement.parentElement.onmousemove=function(e) {
+			pgBar(captions.length-1,progresses[captions.length-1],e,attr,myVdo.duration);
+			}
 	}
 		
 }
@@ -595,6 +692,15 @@ function generateThumbnail() {
 
 var f = document.createElement("figure");
 var ct=document.createElement("figcaption");
+var pgs=document.createElement("section");
+var pgb=document.createElement("progress");
+pgb.max=1;
+pgb.value=0;
+pgb.title='0.0%';
+pgb.style.display='none';
+pgs.style.display='contents';
+pgs.style.width='inherit';
+pgs.style.position='absolute';
 var c = document.createElement("canvas");
 
 f.onwheel= (event) => {
@@ -625,9 +731,12 @@ shiftBtns(true);
 thumbs.appendChild(f);
 
 f.appendChild(c);
+f.appendChild(pgs);
 ct.innerHTML=format_time;
-f.appendChild(ct);
+pgs.appendChild(pgb);
+pgs.appendChild(ct);
 captions.push(ct);
+progresses.push(pgb);
 ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
 }
   
