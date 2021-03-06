@@ -575,7 +575,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
 					progresses[nowFlag].value=perc_r;
 			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
-			pgBar(nowFlag,progresses[nowFlag],e,attr,attr_next.timestamp.nodeValue);
+			pgBar(nowFlag,progresses[nowFlag],e,attr,video.duration);
 			}
 	}else if (cap==cap_el){
 		if(cap_el>=captions.length){
