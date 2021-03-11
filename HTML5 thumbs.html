@@ -1,7 +1,6 @@
 ﻿<html> 
 
 <head>
-<script src="jquery-3.4.1.min.js"></script>
 </head> 
 
 <body>
@@ -196,7 +195,7 @@ if (event.deltaY<0){
 
 window.addEventListener('resize', function () {
 let factor= ((100/3)*(myVdo.clientWidth/myVdo.videoWidth));
-thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"%";
 shiftBtns(true);
 });
 
@@ -222,38 +221,10 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
 	return minutes + secs;
   }
 
-$("#thumbs").ready(function() {
-  $("#thumbs").on("click", "figure", function() {
-    var index = $("figure").index(this);
-	if(window.getComputedStyle(progresses[index]).display==='none'){
-	nowFlag=index;
-	cap=index;
-	  //console.log($(('#thumbs > figure > canvas')[index]));
 
-myVdo.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
-if (!document.pictureInPictureElement) {
-		 window.scrollTo(0,0);
-		 }
-	}
-  });  
-  
-  $("#thumbs").on("dblclick", "figure", function() {
-    var index = $("figure").index(this);
-	if(window.getComputedStyle(progresses[index]).display!=='none'){
-	nowFlag=index;
-	cap=index;
-	  //console.log($(('#thumbs > figure > canvas')[index]));
-
-myVdo.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
-if (!document.pictureInPictureElement) {
-		 window.scrollTo(0,0);
-		 }
-	}
-	  window.getSelection().removeAllRanges();
-  });
   
 scrl.onclick=function(){
-$('#thumbs > figure')[curr_thumb].scrollIntoView();
+captions[curr_thumb].parentElement.parentElement.scrollIntoView();
 };
 
 scrv.onclick=function(){
@@ -265,11 +236,11 @@ mxsp.onwheel= (event) => {
 	event.stopPropagation();
 	
 	if(event.deltaY>0){
-		mxsp.value=(Math.max(1,mxsp.valueAsNumber-parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7});
+		mxsp.value=(Math.max(1,mxsp.valueAsNumber-parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 		adjRate();
 	}
 	if (event.deltaY<0){
-		mxsp.value=(Math.min(16,mxsp.valueAsNumber+parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7});
+		mxsp.value=(Math.min(16,mxsp.valueAsNumber+parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 		adjRate();
 		}
 	}
@@ -347,9 +318,6 @@ myVdo.requestPictureInPicture();
 }
 };
 
-
-  
-});
 
 frame_btn.onwheel= (event) => {
 
@@ -720,7 +688,7 @@ pgs.style.position='absolute';
 var c = document.createElement("canvas");
 
 f.onwheel= (event) => {
-$('#thumbs > figure')[curr_thumb].scrollIntoView();
+captions[curr_thumb].parentElement.parentElement.scrollIntoView();
 skip(event);
 }
 
@@ -742,7 +710,7 @@ c.setAttribute('timestamp_fmt', format_time);
 
 ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 let factor=((100/3)*(myVdo.clientWidth/v_width));
-thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"%";
 shiftBtns(true);
 thumbs.appendChild(f);
 
@@ -753,7 +721,33 @@ pgs.appendChild(pgb);
 pgs.appendChild(ct);
 captions.push(ct);
 progresses.push(pgb);
-ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
+ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+");";
+
+  f.onclick= function(){
+    var index = captions.indexOf(this.lastElementChild.lastElementChild);
+	  if(window.getComputedStyle(progresses[index]).display==='none'){
+	nowFlag=index;
+	cap=index;
+	myVdo.currentTime =c.attributes.timestamp.nodeValue;
+if(!myVdo.ownerDocument.pictureInPictureElement){
+		myVdo.scrollIntoView();
+}
+	  }
+} 
+
+ f.ondblclick=  function(e){
+    var index = captions.indexOf(this.lastElementChild.lastElementChild);
+	  if(window.getComputedStyle(progresses[index]).display!=='none'){
+	nowFlag=index;
+	cap=index;
+	myVdo.currentTime =c.attributes.timestamp.nodeValue;
+if(!myVdo.ownerDocument.pictureInPictureElement){
+		myVdo.scrollIntoView();
+}
+	  }
+	  window.getSelection().removeAllRanges();
+} 
+
 }
   
 }else{
