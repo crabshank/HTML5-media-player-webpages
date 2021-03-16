@@ -428,6 +428,9 @@ var checkDur = function(bool) {
 
 function changeValue()
 {
+	aseek=0;
+	tTrkFlg=false;
+	time_track=-1;
 	curr_thumb=0;
 	loadFlag=false;
 	ttmp=0;
@@ -443,7 +446,6 @@ function changeValue()
 	scrl.style.visibility='hidden';
 	shiftBtns(true);
 	checkDur(true);
-
 }
 
 myVdo.ondurationchange= () => {
@@ -639,6 +641,7 @@ function thumbseek(bool){
 				time_track=-1;
 				ttmp=0;
 				myVdo.currentTime=0;
+				curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 				shiftBtns(false);
 				scrl.style.visibility='';
 				window.scrollTo(0,0);
