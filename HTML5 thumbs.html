@@ -394,25 +394,27 @@ document.getElementById('txtBx').value="";
 
 
 	
-var checkDur = function() {
+var checkDur = function(bool) {
 	if(!!isFinite(myVdo.duration)){
 	loadFlag=true;
 	nowFlag=-1;	
 	shiftBtns(true);
 			if(ev_t==-1){
-			if(myVdo.duration>=270){
-			t=Math.round(Math.ceil(myVdo.duration/90)*3);
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-			evry.innerText='At least every 30 secs';
-			}else if(myVdo.duration<4.5){
-				t=Math.round(Math.Max(1,Math.floor((myVdo.duration*2)/3))*3);
-				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-				evry.innerText='At most every 0.5 secs';
-			}else{
-			t=9;
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-			evry.innerText='9 frames';
-			}
+				if(bool){
+					if(myVdo.duration>=270){
+					t=Math.round(Math.ceil(myVdo.duration/90)*3);
+					frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+					evry.innerText='At least every 30 secs';
+					}else if(myVdo.duration<4.5){
+						t=Math.round(Math.Max(1,Math.floor((myVdo.duration*2)/3))*3);
+						frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+						evry.innerText='At most every 0.5 secs';
+					}else{
+					t=9;
+					frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+					evry.innerText='9 frames';
+					}
+				}
 			ev_t=t;
 			}
 	}
@@ -440,16 +442,16 @@ function changeValue()
 	thumbs.innerHTML="";
 	scrl.style.visibility='hidden';
 	shiftBtns(true);
-	checkDur();
+	checkDur(true);
 
 }
 
 myVdo.ondurationchange= () => {
-  checkDur();
+  checkDur(true);
 }
 
 myVdo.onloadedmetadata= () => {
-  checkDur();
+  checkDur(true);
 }
   
    myVdo.onratechange =function() {
@@ -470,7 +472,8 @@ if (loadFlag===true){
 captions=[];
 thumbs.innerHTML="";
 
-myVdo.load(); 
+//myVdo.load(); 
+  checkDur(false);
 
 aseek=1;
 
