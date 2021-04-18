@@ -67,7 +67,7 @@ progress::-webkit-progress-bar {
 <span id="frames" title="Scroll here to change number of frames.">24</span>
 <span style="margin-inline-start: 4.4ch;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span><input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch; background-color: buttonface; border-width: 0px;"></input>
 
-<div style="width:90%; text-align:center;">
+<div id="tDiv" style="width:90% !important; text-align:center !important;">
 
 
 <video id="video" style="width:90%;" controls>
@@ -113,6 +113,7 @@ var sp_swtch=0;
 var curr  =document.getElementById("currTime");
 var txtBx = document.getElementById('txtBx');
 var vid = document.getElementById('VdoSrc');
+var tDivEl = document.getElementById('tDiv');
 
 
 function pgBar(ix,ths,ev,attr,nxt){
@@ -319,9 +320,11 @@ spb.innerText="Speed through video";
 
 pip.onclick=function(){
 if (document.pictureInPictureElement) {
+tDivEl.style.setProperty( 'text-align', 'center', 'important' );
 document.exitPictureInPicture();
 } else {
 if (document.pictureInPictureEnabled) {
+tDivEl.style.setProperty( 'text-align', 'left', 'important' );
 myVdo.requestPictureInPicture();
 }
 }
