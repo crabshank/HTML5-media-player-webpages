@@ -149,6 +149,8 @@ if(clck_a==-1){
 		t_a=myVdo.currentTime;
 	clck_a = performance.now();
 }else{
+let calcAgain=false;
+let recA=false;
 let c_i=myVdo.currentTime;
 clck_b = performance.now();
 for (let i=myVdo.buffered.length-1; i>=0; i--){	
@@ -166,9 +168,10 @@ if(c_i<=t_i && c_i>=s_i){
 		t_a=t_i;
 		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
 	}else{
-		t_a=c_i
+		calcAgain=true;
+		t_a=c_i;
 	}
-	clck_a=performance.now();
+	recA=true;
 	break;
 }else if(c_i>t_i){
 	break;
@@ -178,6 +181,18 @@ if(c_i<=t_i && c_i>=s_i){
 
 
 }
+
+if (calcAgain===true){
+				if(recA===true){
+				   clck_a=performance.now();
+				}
+				calcSp();
+			}else{
+				if(recA===true){
+				   clck_a=performance.now();
+                }
+            }
+
 }
 
 }
