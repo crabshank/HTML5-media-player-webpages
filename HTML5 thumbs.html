@@ -79,9 +79,7 @@ progress::-webkit-progress-bar {
 <div id="thumbs"style="margin-block-start: 0.1%;"></div>
 
 <script>
-var clck_a=-1;
-var t_a=0;
-var clck_b=0;
+var lddArr=[];
 var m_c=0;
 var m_l=0;
 var curr_thumb=0;
@@ -100,9 +98,6 @@ var tTrkFlg=false;
 var ev_t=-1;
 var perc_r;
 var perc;
-var nxtHi=0;
-var nxtHi_cnt=0;
-var nxtHi_sp=0;
 var frame_btn=document.getElementById("frames");
 var mxsp=document.getElementById("mxs");
 var thumbs=document.getElementById("thumbs");
@@ -118,6 +113,10 @@ var txtBx = document.getElementById('txtBx');
 var vid = document.getElementById('VdoSrc');
 var tDivEl = document.getElementById('tDiv');
 
+function median(arr){
+	 arr = arr.sort((a, b) => a - b);
+    return (arr[arr.length - 1 >> 1] + arr[arr.length >> 1]) / 2;
+}
 
 function pgBar(ix,ths,ev,attr,nxt){
 			if(ev.buttons>0){
@@ -133,9 +132,6 @@ function pgBar(ix,ths,ev,attr,nxt){
 			 }
 }
 			
-			
-			
-
 function shiftBtns(bool){
 	pip.style.top=Math.min(curr.getBoundingClientRect().top-23,myVdo.clientHeight)+'px';
 	if(bool){
@@ -146,7 +142,72 @@ function shiftBtns(bool){
 }
 
 shiftBtns(true);
+	
 function calcSp(){
+if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){ 
+				var lddRaw;
+				var rgs=[];
+				var lastPart=false;
+				let c_i=myVdo.currentTime;
+			for (let k=myVdo.buffered.length-1; k>=0; k--){
+			let t_i=myVdo.buffered.end(k);
+			let s_i=myVdo.buffered.start(k);
+			
+				if(t_i==myVdo.duration && c_i>=s_i){
+					lastPart=true;
+					break;
+				}else if(c_i>=s_i && t_i>=c_i){
+					rgs.push([s_i,t_i]);
+				}
+			}
+			
+			if(lastPart){
+					let vN=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
+						myVdo.playbackRate=vN;		
+			}else{
+					var tot=0;
+					if(rgs.length>0){
+						
+					let sorted=rgs.sort((a, b) => {return a[0] - b[0];})
+					tot=sorted[0][1]-c_i;
+					
+					for (let k=1; k<sorted.length; k++){
+						if(sorted[k-1][1]==sorted[k][0]){
+							tot+=sorted[k][1]-sorted[k][0];
+						}else{
+							break;
+						}
+					}
+					
+					}
+		
+						lddRaw=(myVdo.playbackRate==0)?tot:tot/myVdo.playbackRate;
+						lddArr.push(lddRaw);
+						let mdian=median(lddArr);
+						while(lddArr.length>19){ //keep last 19 buffered times and the median so far
+							lddArr.shift();
+						}
+							lddArr.unshift(mdian);
+
+						let vN=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
+						let outSp=(mdian==0)?1:Math.floor(100*(tot/mdian))*0.01;
+						outSp=Math.max(1,Math.min(outSp,vN));		
+						if(outSp!=myVdo.playbackRate){
+							myVdo.playbackRate=outSp;		
+						}
+
+			}
+				
+					}
+
+}
+	
+
+
+
+
+
+/*function calcSp(){
 if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1 && !myVdo.paused){ 
 if(clck_a==-1){
 		t_a=myVdo.currentTime;
@@ -214,14 +275,12 @@ if (calcAgain===true){
 }
 
 }
-}
+}*/
 
 function adjRate(){
 if(sp_swtch==1){
 myVdo.playbackRate=Math.min(16,Math.max(1,mxsp.valueAsNumber));
-nxtHi=0;
-nxtHi_cnt=0;
-nxtHi_sp=0;
+lddArr=[];
 calcSp();
 }
 }
