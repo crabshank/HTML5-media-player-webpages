@@ -188,7 +188,7 @@ if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){
 								let mn=Math.min(...lddArr);
 								let rng=prev_mx-mn;
 								let rng_norm=(prev_mx==0)?1:rng/prev_mx;
-								let outSp=Math.floor(100*((1-rng_norm)*vN+rng_norm))*0.01;	
+								let outSp=Math.min(Math.floor(100*((1-rng_norm)*vN+rng_norm))*0.01,Math.min(vN,Math.max(tot,1)));
 					}
 						//if(outSp!=myVdo.playbackRate){
 							myVdo.playbackRate=outSp;
