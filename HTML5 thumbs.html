@@ -183,7 +183,7 @@ if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){
 						let outSp=vN;
 						if(lddRaw<=1){
 						 outSp=Math.min(vN,Math.max(tot,1));
-						}else iif(lddRaw>prev_mx){
+						}else if(lddRaw>prev_mx){
 							lddArr=[];
 						}else{
 								//let mx=Math.max(...lddArr);
