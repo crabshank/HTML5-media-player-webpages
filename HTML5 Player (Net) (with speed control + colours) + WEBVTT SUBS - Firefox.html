@@ -26,16 +26,14 @@
   
 <script>
 
-
-
-
 let s = {
 	track: 0,
 	origTrack: 0,
 	vtt: 0,
 	d: 0,
 	delIndicator: 0,
-	blcd: 0
+	blcd: 0,
+	is_vtt: false
 };
 
 
@@ -109,14 +107,12 @@ vid.appendChild(s.track);
 console.log(s.track);
 	s.vtt = 'WEBVTT\n\n' + subti.dom.value;  //txt4.value
 					vid.play();
-						
-						subsCSS = document.createElement("style");
-
 
 									s.track.id = "subs1";
-					s.vtt = colour_subs(s.vtt);
-					s.vtt = srtVttTiming(s.vtt);
-					
+					if(!s.is_vtt){
+						s.vtt = colour_subs(s.vtt);
+						s.vtt = srtVttTiming(s.vtt);
+					}
 						s.track.src = vttURL(s.vtt);
 					s.track.track.mode = "showing";
 $("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + " ms.");
@@ -587,7 +583,7 @@ function changeValue()
     
     <div class="file">
   <label for="file-input">Select subs</label>
-  <input type="file" accept=".srt" id="openFile">
+  <input type="file" accept=".srt,.vtt" id="openFile">
 <button id="Sgo" onclick="sub()">Activate subs</button>
 <button id="Scl" onclick="deact()">Deactivate subs</button>
 </div> 
@@ -720,8 +716,8 @@ sub();
 }
 }
 
+s.is_vtt=(this.files[0].name.endsWith('.vtt'))?true:false;
 fr.readAsText(this.files[0]);
-
 
 })
 
