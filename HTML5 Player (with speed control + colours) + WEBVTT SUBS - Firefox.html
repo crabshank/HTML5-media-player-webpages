@@ -111,12 +111,12 @@ if (subti.dom.value !== "")
 s.track = document.createElement('track');
 vid.appendChild(s.track);
 console.log(s.track);
-	s.vtt = 'WEBVTT\n\n' + subti.dom.value;  //txt4.value
 					vid.play();
 					
 					s.track.id = "subs1";
 									
 					if(!s.is_vtt){
+						s.vtt = 'WEBVTT\n\n' + subti.dom.value;  //txt4.value
 						s.vtt = colour_subs(s.vtt);
 						s.vtt = srtVttTiming(s.vtt);
 					}
