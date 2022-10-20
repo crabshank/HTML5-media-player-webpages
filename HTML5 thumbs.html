@@ -684,8 +684,12 @@ function thumbseek(bool){
 }
  
 myVdo.onseeking=function(){
-	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
-		thumbseek(true);
+	if((aseek==1)&&(myVdo.readyState>=2)){
+		if(myVdo.currentTime>time_track){
+			thumbseek(true);
+		}else{
+			myVdo.currentTime=ttmp*(myVdo.duration/t);
+		}
 	}else{
 		thumbseek(false);
 	}
@@ -693,8 +697,12 @@ myVdo.onseeking=function(){
 
 myVdo.onwating=function(){
 myVdo.playbackRate=1;
-	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
-		thumbseek(true);
+	if((aseek==1)&&(myVdo.readyState>=2)){
+		if(myVdo.currentTime>time_track){
+			thumbseek(true);
+		}else{
+			myVdo.currentTime=ttmp*(myVdo.duration/t);
+		}
 	}else{
 		thumbseek(false);
 	}
@@ -708,8 +716,12 @@ calcSp();
 myVdo.playbackRate=1;
 }
 
-	if((aseek==1)&&(myVdo.currentTime>time_track)){  
-		thumbseek(true);
+	if((aseek==1)&&(myVdo.readyState>=2)){
+		if(myVdo.currentTime>time_track){
+			thumbseek(true);
+		}else{
+			myVdo.currentTime=ttmp*(myVdo.duration/t);
+		}
 	}else{
 		thumbseek(false);
 	}
