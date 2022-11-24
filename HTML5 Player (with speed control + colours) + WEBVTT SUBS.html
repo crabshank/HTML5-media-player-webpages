@@ -1018,8 +1018,8 @@ function Forwards() {
 vid.currentTime = vid.currentTime + 1;
 }
 
-vid.onmouseenter=function(){
-
+vid.onmouseenter=function(event){
+		event.target.controls=true;
         var idleMouseTimer;
         var forceMouseHide = false;
 
@@ -1029,6 +1029,7 @@ vid.onratechange = (event) => {
 	event.target.controls=false;
 }
 vid.onmousemove = (event) => {
+				event.target.controls=true;
                 if(!forceMouseHide) {
                         $("body").css('cursor', '');
 
@@ -1059,7 +1060,8 @@ if (event.deltaY<0){
 
 }
 
-  vid.onmouseleave=function() {
+  vid.onmouseleave=function(event) {
+	event.target.controls=true;
     $(window).off('scroll');
   };
 
