@@ -1025,6 +1025,9 @@ vid.onmouseenter=function(){
 
         $("body").css('cursor', 'none');
 
+vid.onratechange = (event) => {
+	event.target.controls=false;
+}
 vid.onmousemove = (event) => {
                 if(!forceMouseHide) {
                         $("body").css('cursor', '');
