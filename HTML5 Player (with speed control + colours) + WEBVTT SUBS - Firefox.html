@@ -1017,7 +1017,7 @@ vid.currentTime = vid.currentTime + 1;
 vid.onratechange = (event) => {
 	event.target.controls=false;
 }
-vid.onmouseenter=function(){
+vid.onmouseenter=function(event){
  event.target.controls=true;
         var idleMouseTimer;
         var forceMouseHide = false;
