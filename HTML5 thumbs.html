@@ -485,7 +485,6 @@ myVdo.onloadedmetadata= () => {
 }
   
    myVdo.onratechange =function() {
-	myVdo.controls=false;
 	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
 	}
