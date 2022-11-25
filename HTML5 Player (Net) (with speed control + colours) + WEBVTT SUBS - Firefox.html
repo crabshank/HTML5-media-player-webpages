@@ -982,18 +982,15 @@ vid.currentTime = vid.currentTime - 20;
 function Forwards() {
 vid.currentTime = vid.currentTime + 1;
 }
-vid.onratechange = (event) => {
-	event.target.controls=false;
-}
-vid.onmouseenter=function(event){
-		event.target.controls=true;
+
+vid.onmouseenter=function(){
+
         var idleMouseTimer;
         var forceMouseHide = false;
 
         $("body").css('cursor', 'none');
 
 vid.onmousemove = (event) => {
-			event.target.controls=true;
                 if(!forceMouseHide) {
                         $("body").css('cursor', '');
 
@@ -1024,8 +1021,7 @@ if (event.deltaY>0){
 }
     }
 	
-  vid.onmouseleave=function(event) {
-	event.target.controls=true;
+  vid.onmouseleave=function() {
     $(window).off('scroll');
   };
 
