@@ -536,10 +536,6 @@ input::-webkit-slider-thumb {
 }
 
 section { box-flex:1; padding:20px; background:#333; }
-
-
-video { max-width:90%; background:#000; }
-
 </style>
 
   <title>HTML5 local media file player + subs</title>
@@ -678,7 +674,8 @@ h1 {
 
 <button onclick="PlayPause()" type="button" accesskey="b">Play/Pause (b)</button>
 <button onclick="Backwards()" type="button" accesskey="i">Rewind (i)</button>
-<button onclick="Forwards()" type="button" accesskey="o">Fast forward (o)</button><br>
+<button onclick="Forwards()" type="button" accesskey="o">Fast forward (o)</button>
+<button onclick="toggleFullscreen(event)" type="button" accesskey="a">Full screen(a)</button><br>
 
 <button onclick="setPlaySpeedDown()" type="button">-0.25x</button>
 <button onclick="setMinusNoughtPointOne()" type="button" accesskey="[">-0.1x ([)</button>
@@ -756,24 +753,43 @@ p#vidStat {
 
 
 
-
-<video id="video" ondblclick="Fullscreen()" controls autoplay></video>
-
+<section id="fullscreen_cntn" style="margin: 0 !important; padding: 0 !important; border: 0 !important;">
+<video id="video" onclick="toggleFullscreen(event,true)" style="max-width: 90%;background: #000;max-height: 90vh;" controls autoplay></video>
+</section>
 <br>
 
 	<script>
 var vid = document.getElementById("video");
+var fs_sct = document.getElementById("fullscreen_cntn");
+var defaultVidCSS="max-width: 90%;background: #000;max-height: 90vh;";
 
-
-
-function Fullscreen(){
-  if (vid.fullscreenElement) {
-    vid.exitFullscreen();
-	}
-else{
-vid.webkitRequestFullScreen();
-}
-}
+const toggleFullscreen=(event,clk)=>{
+		let a=(clk==true && event.altKey)?true:false;
+		let b=(typeof clk==='undefined')?true:false;
+		if(a){
+			event.preventDefault();
+		}
+		if(a || b){
+			let dfe=document.fullscreenElement;
+			if (dfe===fs_sct) {
+				vid.style.cssText=defaultVidCSS;
+				fs_sct.style.cssText="margin: 0 !important; padding: 0 !important; border: 0 !important;";
+				document.webkitExitFullscreen()
+				vid.webkitExitFullscreen();
+				$("p#vidStat")[0].scrollIntoView();
+			}else if (dfe===vid) {
+				vid.style.cssText=defaultVidCSS;
+				fs_sct.style.cssText="margin: 0 !important; padding: 0 !important; border: 0 !important;";
+				vid.webkitExitFullscreen();
+				document.webkitExitFullscreen()
+				$("p#vidStat")[0].scrollIntoView();
+			}else{
+				vid.style.cssText="max-width:100%; width:100%; background:#000;";
+				fs_sct.style.cssText="margin: 0 !important; padding: 0 !important; border: 0 !important; background:#000;";
+				fs_sct.webkitRequestFullScreen();
+			}
+		}
+};
 
 	function subsDelay(track, origTrack, d, v)
 	{
