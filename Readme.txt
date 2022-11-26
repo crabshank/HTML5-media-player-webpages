@@ -19,6 +19,7 @@ square close bracket = +0.1x
 b = Play
 i = Rewind
 o = Fast forward
+a = Full screen (Not the internal fullscren of the video itself, but my version which allows speed controllers and other extensions to still be visible) (also 'Alt + Click' is a shortcut for this)
 
 , = -10ms subtitle delay
 . = +10ms subtitle delay
