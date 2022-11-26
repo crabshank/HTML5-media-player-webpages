@@ -723,8 +723,8 @@ fr.readAsText(this.files[0]);
 
 </script>
 
-<section id="fullscreen_cntn" style="margin: 0 !important; padding: 0 !important; border: 0 !important;">
-<video id="video" onclick="toggleFullscreen(event,true)" style="max-width: 90%;background: #000;max-height: 90vh;"  controls autoplay>
+<section id="fullscreen_cntn">
+<video id="video" onclick="toggleFullscreen(event,true)" style="background: rgb(0, 0, 0); width:100%; height:100%;"  controls autoplay>
     <source id="VdoSrc" src=""></source>
 </video>
 </section>
@@ -733,7 +733,16 @@ fr.readAsText(this.files[0]);
 	<script>
 var vid = document.getElementById("video");
 var fs_sct = document.getElementById("fullscreen_cntn");
-var defaultVidCSS="max-width: 90%;background: #000;max-height: 90vh;";
+var defaultSctCSS="margin: 0px !important;padding: 0 !important;border: 0 !important;display:  inline-table;max-height: 95vh; max-width: 90%;";
+fs_sct.style.cssText=defaultSctCSS;
+document.onwebkitfullscreenchange=(event)=>{
+	let dfe=document.fullscreenElement;
+	if(event.target.webkitDisplayingFullscreen===false){
+				fs_sct.style.cssText=defaultSctCSS;
+				document.webkitExitFullscreen();
+				$("p#vidStat")[0].scrollIntoView();
+	}
+};
 
 const toggleFullscreen=(event,clk)=>{
 		let a=(clk==true && event.altKey)?true:false;
@@ -744,21 +753,18 @@ const toggleFullscreen=(event,clk)=>{
 		if(a || b){
 			let dfe=document.fullscreenElement;
 			if (dfe===fs_sct) {
-				vid.style.cssText=defaultVidCSS;
-				fs_sct.style.cssText="margin: 0 !important; padding: 0 !important; border: 0 !important;";
+				fs_sct.style.cssText=defaultSctCSS;
 				document.webkitExitFullscreen()
-				vid.webkitExitFullscreen();
 				$("p#vidStat")[0].scrollIntoView();
 			}else if (dfe===vid) {
-				vid.style.cssText=defaultVidCSS;
-				fs_sct.style.cssText="margin: 0 !important; padding: 0 !important; border: 0 !important;";
-				vid.webkitExitFullscreen();
+				fs_sct.style.cssText=defaultSctCSS;
 				document.webkitExitFullscreen()
 				$("p#vidStat")[0].scrollIntoView();
 			}else{
-				vid.style.cssText="max-width:100%; width:100%; background:#000;";
-				fs_sct.style.cssText="margin: 0 !important; padding: 0 !important; border: 0 !important; background:#000;";
+				let c='margin: 0px !important;padding: 0 !important;border: 0 !important;display:  inline-table;max-width:100%; width:100%; max-height:100%; height:100%;min-width:100%;min-height:100%; background:#000;';
+				fs_sct.style.cssText=c;
 				fs_sct.webkitRequestFullScreen();
+				fs=1;
 			}
 		}
 };
@@ -1003,14 +1009,14 @@ function Forwards() {
 vid.currentTime = vid.currentTime + 1;
 }
 
-vid.onmouseenter=function(){
+fs_sct.onmouseenter=function(){
 
         var idleMouseTimer;
         var forceMouseHide = false;
 
         $("body").css('cursor', 'none');
 
-vid.onmousemove = (event) => {
+fs_sct.onmousemove = (event) => {
                 if(!forceMouseHide) {
                         $("body").css('cursor', '');
 
@@ -1027,7 +1033,7 @@ vid.onmousemove = (event) => {
                 }
 }
 
-vid.onwheel = (event) => {
+fs_sct.onwheel = (event) => {
 event.preventDefault();
 event.stopPropagation();
 
@@ -1041,7 +1047,7 @@ if (event.deltaY<0){
 
 }
 
-  vid.onmouseleave=function() {
+  fs_sct.onmouseleave=function() {
     $(window).off('scroll');
   };
 
