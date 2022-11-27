@@ -769,7 +769,7 @@ fs_sct.style.cssText=defaultSctCSS;
 vid.style.cssText=defaultVidCSS+hw0;
 document.onwebkitfullscreenchange=(event)=>{
 	let dfe=document.fullscreenElement;
-	if(event.target.webkitDisplayingFullscreen===false){
+	if(event.target.webkitDisplayingFullscreen===false || dfe ===null){
 				fs_sct.style.cssText=defaultSctCSS;
 				vid.style.cssText=defaultVidCSS+hw0;
 				document.webkitExitFullscreen();
