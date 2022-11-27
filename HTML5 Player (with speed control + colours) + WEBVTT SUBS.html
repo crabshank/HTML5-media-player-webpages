@@ -754,15 +754,18 @@ p#vidStat {
 
 
 <section id="fullscreen_cntn">
-<video id="video" onclick="toggleFullscreen(event,true)" style="background: rgb(0, 0, 0); width:100%; height:100%;"  controls autoplay></video>
+<video id="video" onclick="toggleFullscreen(event,true)" controls autoplay></video>
 </section>
 <br>
 
 	<script>
 var vid = document.getElementById("video");
 var fs_sct = document.getElementById("fullscreen_cntn");
+let hw=(window.screen.availHeight > window.screen.availWidth)? 'max-width:100% !important; width:100% !important; min-width:100% !important;' : 'max-height:100% !important; height:100% !important;min-height:100% !important;';
+var defaultVidCSS="background: rgb(0, 0, 0);"+hw;
 var defaultSctCSS="margin: 0px !important;padding: 0 !important;border: 0 !important;display:  inline-table;max-height: 95vh; max-width: 90%;";
 fs_sct.style.cssText=defaultSctCSS;
+vid.style.cssText=defaultVidCSS;
 document.onwebkitfullscreenchange=(event)=>{
 	let dfe=document.fullscreenElement;
 	if(event.target.webkitDisplayingFullscreen===false){
@@ -789,7 +792,7 @@ const toggleFullscreen=(event,clk)=>{
 				document.webkitExitFullscreen()
 				$("p#vidStat")[0].scrollIntoView();
 			}else{
-				let c='margin: 0px !important;padding: 0 !important;border: 0 !important;display:  inline-table;max-width:100%; width:100%; max-height:100%; height:100%;min-width:100%;min-height:100%; background:#000;';
+				let c=`margin: 0px !important;padding: 0 !important;border: 0 !important;display: contents; ${ hw } background:#000; text-align:-webkit-center;`;
 				fs_sct.style.cssText=c;
 				fs_sct.webkitRequestFullScreen();
 				fs=1;
