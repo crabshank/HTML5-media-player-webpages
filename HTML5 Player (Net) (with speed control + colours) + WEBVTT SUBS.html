@@ -735,10 +735,10 @@ var vid = document.getElementById("video");
 var fs_sct = document.getElementById("fullscreen_cntn");
 let hw=(window.screen.availHeight > window.screen.availWidth)? 'max-width:100% !important; width:100% !important; min-width:100% !important;' : 'max-height:100% !important; height:100% !important;min-height:100% !important;';
 let hw0=(window.screen.availHeight > window.screen.availWidth)? 'max-width:90% !important;' : 'max-height:95vh !important';
-var defaultVidCSS="background: rgb(0, 0, 0);"+hw0;
+var defaultVidCSS="background: rgb(0, 0, 0);";
 var defaultSctCSS="margin: 0px !important;padding: 0 !important;border: 0 !important;display:  inline-table;max-height: 95vh; max-width: 90%;";
 fs_sct.style.cssText=defaultSctCSS;
-vid.style.cssText=defaultVidCSS;
+vid.style.cssText=defaultVidCSS+hw0;
 document.onwebkitfullscreenchange=(event)=>{
 	let dfe=document.fullscreenElement;
 	if(event.target.webkitDisplayingFullscreen===false){
@@ -758,15 +758,18 @@ const toggleFullscreen=(event,clk)=>{
 			let dfe=document.fullscreenElement;
 			if (dfe===fs_sct) {
 				fs_sct.style.cssText=defaultSctCSS;
+				vid.style.cssText=defaultVidCSS+hw0;
 				document.webkitExitFullscreen()
 				$("p#vidStat")[0].scrollIntoView();
 			}else if (dfe===vid) {
 				fs_sct.style.cssText=defaultSctCSS;
+				vid.style.cssText=defaultVidCSS+hw0;
 				document.webkitExitFullscreen()
 				$("p#vidStat")[0].scrollIntoView();
 			}else{
 				let c=`margin: 0px !important;padding: 0 !important;border: 0 !important;display: contents; ${ hw } background:#000; text-align:-webkit-center;`;
 				fs_sct.style.cssText=c;
+				vid.style.cssText=defaultVidCSS+hw;
 				fs_sct.webkitRequestFullScreen();
 				fs=1;
 			}
@@ -1232,4 +1235,3 @@ mtx.remove();
 
 
 </html>
-
