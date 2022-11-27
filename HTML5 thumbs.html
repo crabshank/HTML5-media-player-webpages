@@ -558,7 +558,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
 			
 			progresses[nowFlag].value=perc_r;
-			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
+			captions[nowFlag].parentElement.parentElement.onpointermove=function (e) {
 			pgBar(nowFlag,progresses[nowFlag],e,attr,attr_next.timestamp.nodeValue);
 			}
 			nowFlag=-1;
@@ -571,7 +571,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#0004ff99";
 			progresses[cap_el].value=perc_r;
-			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+			captions[cap_el].parentElement.parentElement.onpointermove=function (e) {
 			pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
 			}
 	}else{
@@ -585,7 +585,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#006115c7";
 			progresses[cap_el].value=perc_r;
-			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+			captions[cap_el].parentElement.parentElement.onpointermove=function (e) {
 			pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
 			}
 	}
@@ -599,7 +599,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
 					progresses[nowFlag].value=perc_r;
-			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
+			captions[nowFlag].parentElement.parentElement.onpointermove=function (e) {
 			pgBar(nowFlag,progresses[nowFlag],e,attr,video.duration);
 			}
 	}else if (cap==cap_el){
@@ -611,7 +611,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";	
 			progresses[captions.length-1].value=perc_r;
-			captions[captions.length-1].parentElement.parentElement.onmousemove=function (e) {
+			captions[captions.length-1].parentElement.parentElement.onpointermove=function (e) {
 			pgBar(captions.length-1,progresses[captions.length-1].value,e,attr,myVdo.duration);
 			}
 		}else{
@@ -622,7 +622,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 		curr_thumb=cap_el;
 		captions[cap_el].style.backgroundColor="#0004ff99";
 		progresses[cap_el].value=perc_r;
-			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+			captions[cap_el].parentElement.parentElement.onpointermove=function (e) {
 			pgBar(cap_el,progresses[cap_el],e,attr,myVdo.duration);
 			}
 		}
@@ -634,7 +634,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";
 			progresses[captions.length-1].value=perc_r;
-			captions[captions.length-1].parentElement.parentElement.onmousemove=function(e) {
+			captions[captions.length-1].parentElement.parentElement.onpointermove=function(e) {
 			pgBar(captions.length-1,progresses[captions.length-1],e,attr,myVdo.duration);
 			}
 	}
