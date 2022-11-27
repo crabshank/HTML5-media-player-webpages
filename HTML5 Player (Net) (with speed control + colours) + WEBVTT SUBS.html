@@ -743,6 +743,7 @@ document.onwebkitfullscreenchange=(event)=>{
 	let dfe=document.fullscreenElement;
 	if(event.target.webkitDisplayingFullscreen===false){
 				fs_sct.style.cssText=defaultSctCSS;
+				vid.style.cssText=defaultVidCSS+hw0;
 				document.webkitExitFullscreen();
 				$("p#vidStat")[0].scrollIntoView();
 	}
