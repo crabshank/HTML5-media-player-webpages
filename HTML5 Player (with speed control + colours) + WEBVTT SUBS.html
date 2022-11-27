@@ -4,7 +4,7 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
 <meta charset="utf-8">
-<script src="jquery-3.4.1.min.js"></script>
+<script src="jquery-3.6.1.min.js"></script>
   
     <script src="balancetext.min.js"></script>
 
@@ -1046,25 +1046,25 @@ fs_sct.onclick=function(event){
 	}
 }
 
-fs_sct.onmouseenter=function(){
+fs_sct.onpointerenter=function(){
 
-        var idleMouseTimer;
-        var forceMouseHide = false;
+        var idlePointerTimer;
+        var forcePointerHide = false;
 
         $("body").css('cursor', 'none');
 
-fs_sct.onmousemove = (event) => {
-                if(!forceMouseHide) {
+fs_sct.onpointermove = (event) => {
+                if(!forcePointerHide) {
                         $("body").css('cursor', '');
 
-                        clearTimeout(idleMouseTimer);
+                        clearTimeout(idlePointerTimer);
 
-                        idleMouseTimer = setTimeout(function() {
+                        idlePointerTimer = setTimeout(function() {
                                 $("body").css('cursor', 'none');
 
-                                forceMouseHide = true;
+                                forcePointerHide = true;
                                 setTimeout(function() {
-                                        forceMouseHide = false;
+                                        forcePointerHide = false;
                                 }, 1);
                         }, 3000);
                 }
@@ -1084,7 +1084,7 @@ if (event.deltaY<0){
 
 }
 
-  fs_sct.onmouseleave=function() {
+  fs_sct.onpointerleave=function() {
     $(window).off('scroll');
   };
 

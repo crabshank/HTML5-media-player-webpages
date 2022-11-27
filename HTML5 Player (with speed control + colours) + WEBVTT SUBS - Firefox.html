@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script src="jquery-3.4.1.min.js"></script>
+<script src="jquery-3.6.1.min.js"></script>
   
     <script src="balancetext.min.js"></script>
 
@@ -1015,25 +1015,25 @@ function Forwards() {
 vid.currentTime = vid.currentTime + 1;
 }
 
-vid.onmouseenter=function(){
+vid.onpointerenter=function(){
 
-        var idleMouseTimer;
-        var forceMouseHide = false;
+        var idlePointerTimer;
+        var forcePointerHide = false;
 
         $("body").css('cursor', 'none');
 
-vid.onmousemove = (event) => {
-                if(!forceMouseHide) {
+vid.onpointermove = (event) => {
+                if(!forcePointerHide) {
                         $("body").css('cursor', '');
 
-                        clearTimeout(idleMouseTimer);
+                        clearTimeout(idlePointerTimer);
 
-                        idleMouseTimer = setTimeout(function() {
+                        idlePointerTimer = setTimeout(function() {
                                 $("body").css('cursor', 'none');
 
-                                forceMouseHide = true;
+                                forcePointerHide = true;
                                 setTimeout(function() {
-                                        forceMouseHide = false;
+                                        forcePointerHide = false;
                                 }, 1);
                         }, 3000);
                 }
@@ -1053,7 +1053,7 @@ if (event.deltaY>0){
 }
     }
 	
-  vid.onmouseleave=function() {
+  vid.onpointerleave=function() {
     $(window).off('scroll');
   };
   
