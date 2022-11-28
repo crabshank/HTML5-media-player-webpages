@@ -762,20 +762,28 @@ p#vidStat {
 var vid = document.getElementById("video");
 var fs_sct = document.getElementById("fullscreen_cntn");
 let hw=(window.screen.availHeight > window.screen.availWidth)? 'max-width:100% !important; width:100% !important; min-width:100% !important;' : 'max-height:100% !important; height:100% !important;min-height:100% !important;';
-let hw0=(window.screen.availHeight > window.screen.availWidth)? 'max-width:90% !important;' : 'max-height:95vh !important';
+let hw0=(window.screen.availHeight > window.screen.availWidth)? 'max-width:90% !important;' : 'max-height:95vh !important;';
 var defaultVidCSS="background: rgb(0, 0, 0);";
 var defaultSctCSS="margin: 0px !important;padding: 0 !important;border: 0 !important;display:  inline-table;max-height: 95vh; max-width: 90%;";
 fs_sct.style.cssText=defaultSctCSS;
-vid.style.cssText=defaultVidCSS+hw0;
+setVidCSS(hw0)
 document.onwebkitfullscreenchange=(event)=>{
 	let dfe=document.fullscreenElement;
 	if(event.target.webkitDisplayingFullscreen===false || dfe ===null){
 				fs_sct.style.cssText=defaultSctCSS;
-				vid.style.cssText=defaultVidCSS+hw0;
+				setVidCSS(hw0);
 				document.webkitExitFullscreen();
 				$("p#vidStat")[0].scrollIntoView();
 	}
 };
+
+function setVidCSS(hw1){
+	if(hw1===hw){
+		vid.style.cssText=vid.style.cssText.split(hw0).join('')+hw1;
+	}else{ //=== hw0
+			vid.style.cssText=vid.style.cssText.split(hw).join('')+hw1;
+	}
+}
 
 const toggleFullscreen=(event,clk)=>{
 		let a=(clk==true && event.altKey)?true:false;
@@ -787,18 +795,18 @@ const toggleFullscreen=(event,clk)=>{
 			let dfe=document.fullscreenElement;
 			if (dfe===fs_sct) {
 				fs_sct.style.cssText=defaultSctCSS;
-				vid.style.cssText=defaultVidCSS+hw0;
+				 setVidCSS(hw0);
 				document.webkitExitFullscreen()
 				$("p#vidStat")[0].scrollIntoView();
 			}else if (dfe===vid) {
 				fs_sct.style.cssText=defaultSctCSS;
-				vid.style.cssText=defaultVidCSS+hw0;
+				setVidCSS(hw0);
 				document.webkitExitFullscreen()
 				$("p#vidStat")[0].scrollIntoView();
 			}else{
 				let c=`margin: 0px !important;padding: 0 !important;border: 0 !important;display: contents; ${ hw } background:#000; text-align:-webkit-center;`;
 				fs_sct.style.cssText=c;
-				vid.style.cssText=defaultVidCSS+hw;
+				setVidCSS(hw);
 				fs_sct.webkitRequestFullScreen();
 				fs=1;
 			}
