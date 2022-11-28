@@ -762,11 +762,13 @@ p#vidStat {
 var vid = document.getElementById("video");
 var fs_sct = document.getElementById("fullscreen_cntn");
 let hw=(window.screen.availHeight > window.screen.availWidth)? 'max-width:100% !important; width:100% !important; min-width:100% !important;' : 'max-height:100% !important; height:100% !important;min-height:100% !important;';
-let hw0=(window.screen.availHeight > window.screen.availWidth)? 'max-width:90% !important;' : 'max-height:95vh !important;';
+let hw0=(window.screen.availHeight > window.screen.availWidth)? 'max-width:90% !important;' : 'max-height:95vh !important';
+let hw_r=(window.screen.availHeight > window.screen.availWidth)? /max-width:\s*100%\s*!important\s*\;\s*width:\s*100%\s*!important\s*\;\s*min-width:\s*100%\s*!important\s*\;/ : /max-height:\s*100%\s*!important\s*\;\s*height:\s*100%\s*!important\s*\;\s*min-height:\s*100%\s*!important\s*\;/;
+let hw0_r=(window.screen.availHeight > window.screen.availWidth)? /max-width:\s*90%\s*!important\s*\;/ : /max-height:\s*95vh\s*!important\s*\;/;
 var defaultVidCSS="background: rgb(0, 0, 0);";
 var defaultSctCSS="margin: 0px !important;padding: 0 !important;border: 0 !important;display:  inline-table;max-height: 95vh; max-width: 90%;";
 fs_sct.style.cssText=defaultSctCSS;
-setVidCSS(hw0)
+setVidCSS(hw0);
 document.onwebkitfullscreenchange=(event)=>{
 	let dfe=document.fullscreenElement;
 	if(event.target.webkitDisplayingFullscreen===false || dfe ===null){
@@ -779,12 +781,11 @@ document.onwebkitfullscreenchange=(event)=>{
 
 function setVidCSS(hw1){
 	if(hw1===hw){
-		vid.style.cssText=vid.style.cssText.split(hw0).join('')+hw1;
+		vid.style.cssText=vid.style.cssText.split(hw0_r).join('')+hw1;
 	}else{ //=== hw0
-			vid.style.cssText=vid.style.cssText.split(hw).join('')+hw1;
+			vid.style.cssText=vid.style.cssText.split(hw_r).join('')+hw1;
 	}
 }
-
 const toggleFullscreen=(event,clk)=>{
 		let a=(clk==true && event.altKey)?true:false;
 		let b=(typeof clk==='undefined')?true:false;
