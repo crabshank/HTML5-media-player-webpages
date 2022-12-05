@@ -457,7 +457,7 @@ button{
 * { box-sizing:border-box; }
 
 body { display:box; box-orient:horizontal; background:#333; }
-aside { width:360px; }
+aside { width:-webkit-fill-available; }
 aside div { 
   padding:10px; 
   border-bottom:1px solid #888; 
@@ -466,8 +466,8 @@ aside div {
   background:#aaa;
 }
 aside input#colMat {
-    margin: -17px 0px 1px 0px;
-    margin-left: 47%;
+    margin: -17px 1em 1px -1.3em;
+    transform: translate(-0.2em,0.7em);
 }
 aside div:first-child {
     padding-top: 15px;
@@ -503,7 +503,7 @@ aside div#clrMtrx div {
     font: 400 13.3333px Arial;
     -webkit-writing-mode: horizontal-tb !important;
 }
-label { display:block; font:13px "Helvetica", sans-serif; color:#222; }
+label { display:-webkit-inline-box; font:13px "Helvetica", sans-serif; color:#222; }
 strong { font-weight:bold; padding:0 3px; user-select:none; }
 code { display:inline-block; font:12px "Courier new"; float:right; color:#444; }
 
