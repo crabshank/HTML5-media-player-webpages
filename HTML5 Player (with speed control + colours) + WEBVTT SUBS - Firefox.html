@@ -478,7 +478,7 @@ input[type="file" i]::-webkit-file-upload-button{
 * { box-sizing:border-box; }
 
 body { display:box; box-orient:horizontal; background:#333; }
-aside { width:360px; }
+aside { width:-webkit-fill-available; }
 aside div { 
   padding:10px; 
   border-bottom:1px solid #888; 
@@ -487,7 +487,8 @@ aside div {
   background:#aaa;
 }
 aside input#colMat {
-    margin: -18px 0px 1px 46px;
+    margin: 0px 0em 0px 0em;
+	transform: translate(-1.5em,-0.2em);
 }
 aside div:first-child {
     padding-top: 15px;
@@ -495,8 +496,15 @@ aside div:first-child {
 
 aside div:hover { background:#bbb; }
 aside div#clrMtrx {
-    max-width: 295px;
-    border-bottom: initial;
+	max-width: 295px;
+	border-bottom: initial;
+	max-width: 295px;
+	border-bottom: initial;
+	max-width: 295px;
+	border-bottom: initial;
+	grid-template-columns: repeat(5, 1fr);
+	grid-template-rows: repeat(4, 1fr);
+	display: grid;
 }
 
 aside div#clrMtrx div {
@@ -523,11 +531,11 @@ aside div#clrMtrx div {
     font: 400 13.3333px Arial;
     -webkit-writing-mode: horizontal-tb !important;
 }
-label { display:block; font:13px "Helvetica", sans-serif; color:#222; }
+label { display:-webkit-inline-box; font:13px "Helvetica", sans-serif; color:#222; }
 strong { font-weight:bold; padding:0 3px; user-select:none; }
 code { display:inline-block; font:12px "Courier new"; float:right; color:#444; }
 
-input { appearance:none!important; background:#777;  width:100%; border-radius:3px; height:20px; }
+input {background:#777;  width:100%; border-radius:3px; height:20px; }
 input::-webkit-slider-thumb {
   appearance:none!important; width:32px; height:20px;  background:#111; border-radius:3px;
 }
@@ -535,17 +543,11 @@ input::-webkit-slider-thumb {
 section { box-flex:1; padding:20px; background:#333; }
 
 
-video { max-width:90%; background:#000; }
+video { max-height:95vh; background:#000; }
 
 </style>
 
   <title>HTML5 local media file player + subs</title>
-
-  
-    
-
-
-
 
 <script type='text/javascript'>
 window.onload=function(){
@@ -664,7 +666,8 @@ h1 {
   border-radius: 5px;
   line-height: 30px;
   text-align: center;
-  cursor: pointer
+  cursor: pointer;
+  display: block;
 }
 
 </style>
@@ -1097,32 +1100,32 @@ if (event.deltaY>0){
 </div>
   <div>
     <label>
-      <strong>Blur</strong><code>-webkit-filter:blur(<span id="blur-val">0</span>px);</code>
+      <strong>Blur</strong><code>filter:blur(<span id="blur-val">0</span>px);</code>
     </label>
 		<input id="blur" type="range" min="0" max="20" step="1" value="0" />
   </div>
   <div>
-    <label><strong>Saturation</strong><code>-webkit-filter:saturate(<span id="saturate-val">1</span>);</code></label>
+    <label><strong>Saturation</strong><code>filter:saturate(<span id="saturate-val">1</span>);</code></label>
     <input id="saturate" type="range" min="0" max="5" step="0.001" value="1"/>
   </div>
   <div>
-    <label><strong>Hue</strong><code>-webkit-filter:hue-rotate(<span id="hue-val">0</span>deg);</code></label>
+    <label><strong>Hue</strong><code>filter:hue-rotate(<span id="hue-val">0</span>deg);</code></label>
     <input id="hue" type="range" min="0" max="360" step="1" value="0" />
   </div>
   <div>
-    <label><strong>Brightness</strong><code>-webkit-filter:brightness(<span id="brightness-val">1</span>);</code></label>
+    <label><strong>Brightness</strong><code>filter:brightness(<span id="brightness-val">1</span>);</code></label>
     <input id="brightness" type="range" min="0" max="10" step="0.001" value="1" />
   </div>
   <div>
-    <label><strong>Contrast</strong><code>-webkit-filter:contrast(<span id="contrast-val">1</span>);</code></label>
+    <label><strong>Contrast</strong><code>filter:contrast(<span id="contrast-val">1</span>);</code></label>
     <input id="contrast" type="range" min="0" max="10" step="0.001" value="1" />
   </div>
   <div>
-    <label><strong>Invert</strong><code>-webkit-filter:invert(<span id="invert-val">0</span>);</code></label>
+    <label><strong>Invert</strong><code>filter:invert(<span id="invert-val">0</span>);</code></label>
     <input id="invert" type="range" min="0" max="1" step="1" value="0" />
   </div>
   <div>
-    <label><strong>Sepia</strong><code>-webkit-filter:sepia(<span id="sepia-val">0</span>);</code></label>
+    <label><strong>Sepia</strong><code>filter:sepia(<span id="sepia-val">0</span>);</code></label>
     <input id="sepia" type="range" min="0" max="1" step="0.01" value="0" />
   </div>
 </aside>
