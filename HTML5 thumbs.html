@@ -114,6 +114,10 @@ var txtBx = document.getElementById('txtBx');
 var vid = document.getElementById('VdoSrc');
 var tDivEl = document.getElementById('tDiv');
 
+function scrollElMidPage(el){
+	el.scrollIntoView({behavior: "auto", block: "center", inline: "start"});
+}
+
 function pgBar(ix,ths,ev,attr,nxt){
 			if(ev.buttons>0){
 			ev.preventDefault();
@@ -258,7 +262,7 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
 
   
 scrl.onclick=function(){
-captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 };
 
 scrv.onclick=function(){
@@ -743,7 +747,7 @@ pgs.style.position='absolute';
 var c = document.createElement("canvas");
 
 f.onwheel= (event) => {
-captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 skip(event);
 }
 
@@ -785,7 +789,7 @@ ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLo
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 if(!myVdo.ownerDocument.pictureInPictureElement){
-		myVdo.scrollIntoView();
+		scrollElMidPage(myVdo);
 }
 	  }
 } 
@@ -797,7 +801,7 @@ if(!myVdo.ownerDocument.pictureInPictureElement){
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 if(!myVdo.ownerDocument.pictureInPictureElement){
-		myVdo.scrollIntoView();
+		scrollElMidPage(myVdo);
 }
 	  }
 	  window.getSelection().removeAllRanges();
