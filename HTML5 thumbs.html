@@ -81,6 +81,7 @@ progress::-webkit-progress-bar {
 
 <script>
 var lddArr=[];
+var progresses=[];
 var m_c=0;
 var m_l=0;
 var curr_thumb=0;
@@ -90,7 +91,6 @@ var loadFlag=false;
 var nowFlag=-1;
 var aseek=0;
 var captions=[];
-var progresses=[];
 var ttmp=0;
 var cap=-1;
 var cap_el;
@@ -115,7 +115,18 @@ var vid = document.getElementById('VdoSrc');
 var tDivEl = document.getElementById('tDiv');
 
 function scrollElMidPage(el){
-	el.scrollIntoView({behavior: "auto", block: "center", inline: "start"});
+	let vpos='center';
+	let elp=el.parentElement;
+	if(elp===thumbs){
+		let s_arr=[...el.parentElement.children];
+		let s_ix=s_arr.indexOf(el);
+		if(s_ix<3){
+			vpos='start';
+		}else if(s_ix>=s_arr.length-3){
+			vpos='end';
+		}
+	}
+	el.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
 }
 
 function pgBar(ix,ths,ev,attr,nxt){
@@ -473,6 +484,7 @@ function changeValue()
     myVdo.load(); 
 	myVdo.pause();
   	captions=[];
+	progresses=[];
 	curr_thumb=0;
 	thumbs.innerHTML="";
 	scrl.style.visibility='hidden';
@@ -504,6 +516,7 @@ function doThumbs()
 if (loadFlag===true){
 	 done_t=t;
 captions=[];
+progresses=[];
 thumbs.innerHTML="";
 
 //myVdo.load(); 
@@ -782,7 +795,7 @@ captions.push(ct);
 progresses.push(pgb);
 ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+");";
 
-  f.onclick= function(){
+  f.onclick= function(e){
     var index = captions.indexOf(this.lastElementChild.lastElementChild);
 	  if(window.getComputedStyle(progresses[index]).display==='none'){
 	nowFlag=index;
@@ -790,6 +803,8 @@ ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLo
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 if(!myVdo.ownerDocument.pictureInPictureElement){
 		scrollElMidPage(myVdo);
+}else{
+	scrollElMidPage(this);
 }
 	  }
 } 
@@ -802,6 +817,8 @@ if(!myVdo.ownerDocument.pictureInPictureElement){
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 if(!myVdo.ownerDocument.pictureInPictureElement){
 		scrollElMidPage(myVdo);
+}else{
+	scrollElMidPage(this);
 }
 	  }
 	  window.getSelection().removeAllRanges();
