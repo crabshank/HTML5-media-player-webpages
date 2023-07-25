@@ -1092,7 +1092,7 @@ vid.currentTime = vid.currentTime + 1;
 }
 
 fs_sct.onclick=function(event){
-	if(event.button===0 && (event.target===fs_sct || event.target===vid)){
+	if(event.button===0 && (event.target===fs_sct || (mouseSpeed===true && event.target===vid) )){
 		PlayPause();
 	}
 }
