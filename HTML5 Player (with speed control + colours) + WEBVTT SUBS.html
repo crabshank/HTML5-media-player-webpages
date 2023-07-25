@@ -727,7 +727,7 @@ button#Scl {
 	<div oninput="changePtrSpeed()" contenteditable="true" title="Min speed (Cursor on left)" id="minSpd">1</div>
 	<div oninput="changePtrSpeed()" contenteditable="true" title="Mid speed (Cursor in centre)" id="midSpd">3.5</div>
 	<div oninput="changePtrSpeed()" contenteditable="true" title="Mid speed (Cursor on right)" id="maxSpd">10</div>
-	<div oninput="changePtrSpeed()" contenteditable="true" title="If cursor in bottom y%, show controls." id="yControls">95%</div>
+	<div oninput="changePtrSpeed()" contenteditable="true" title="If cursor in bottom y%, show controls." id="yControls">90%</div>
 </section>
 <button onclick="subsyncminusfive()" type="button">-5s</button>
 <button onclick="subsyncminusone()" type="button">-1s</button>
@@ -758,7 +758,7 @@ video{
 
 
 
-<section id="fullscreen_cntn">
+<section id="fullscreen_cntn" style="cursor:none;">
 <video id="video" onclick="toggleFullscreen(event,true)" controls autoplay></video>
 </section>
 <br>
@@ -1156,13 +1156,9 @@ fs_sct.onpointermove = (event) => {
 			}
 }
 
-window.onpointermove=(e)=>{
+vid.onpointermove=(e)=>{
 	if(mouseSpeed===true){
-		let x=Math.max(0,Math.min(1,e.screenX/(window.screen.availWidth-1)));
-		let y=Math.max(0,Math.min(1,e.screenY/(window.screen.availHeight-1)));
-		let s=(x>0.5)?lerp(midSpeed,maxSpeed,(x-0.5)*2):lerp(minSpeed,midSpeed,x*2);
-		s=(Math.round(s*100)*0.01); //2 d.p.
-		vid.playbackRate=s;
+		let y=e.offsetY/vid.clientHeight;
 		if(y>=controlsBottom){
 			document.body.style.setProperty('cursor','','important');
 			vid.controls=true;
@@ -1170,6 +1166,15 @@ window.onpointermove=(e)=>{
 			document.body.style.setProperty('cursor','none','important');
 			vid.controls=false;
 		}
+	}
+}
+
+window.onpointermove=(e)=>{
+	if(mouseSpeed===true){
+		let x=Math.max(0,Math.min(1,e.screenX/(window.screen.availWidth-1)));
+		let s=(x>0.5)?lerp(midSpeed,maxSpeed,(x-0.5)*2):lerp(minSpeed,midSpeed,x*2);
+		s=(Math.round(s*100)*0.01); //2 d.p.
+		vid.playbackRate=s;
 	}
 }
 
