@@ -9,6 +9,7 @@ Alt + :
 6
 7
 8
+9
 = for 'these numbers'x speed
 
 \ = Switch between last playback rate and 1x
@@ -20,6 +21,7 @@ b = Play
 i = Rewind
 o = Fast forward
 a = Full screen (Not the internal fullscren of the video itself, but my version which allows speed controllers and other extensions to still be visible) (also 'Alt + Click' is a shortcut for this)
+s = Acivate pointer speed mode. This allows the user to move the (mouse) pointer left to right to adjust the playback rate.
 
 , = -10ms subtitle delay
 . = +10ms subtitle delay
