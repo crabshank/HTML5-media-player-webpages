@@ -758,13 +758,14 @@ video{
 
 
 
-<section id="fullscreen_cntn" style="cursor:none;">
+<section id="fullscreen_cntn">
 <video id="video" onclick="toggleFullscreen(event,true)" controls autoplay></video>
 </section>
 <br>
 
 	<script>
 let mouseSpeed=false;
+let mouseInY=false;
 
 function lerp(a,b,t) {
 	return ((1 - (t)) * (a) + (t) * (b) );
@@ -1101,8 +1102,6 @@ fs_sct.onpointerenter=function(){
 	if(mouseSpeed===false){
 		idlePointerTimer=null;
 		forcePointerHide = false;
-
-		$("body").css('cursor', 'none');
 	}
 }
 fs_sct.onwheel = (event) => {
@@ -1119,12 +1118,12 @@ fs_sct.onwheel = (event) => {
 	
 fs_sct.onpointermove = (event) => {
                 if(!forcePointerHide && mouseSpeed===false) {
-                        $("body").css('cursor', '');
+                       fs_sct.style.setProperty('cursor','','important');
 
                         clearTimeout(idlePointerTimer);
 
                         idlePointerTimer = setTimeout(function() {
-                                $("body").css('cursor', 'none');
+                           fs_sct.style.setProperty('cursor','none','important');
 
                                 forcePointerHide = true;
                                 setTimeout(function() {
@@ -1142,13 +1141,13 @@ fs_sct.onpointermove = (event) => {
   function togglePointerSpeed(){
 			if(vid.readyState>=2 && mouseSpeed===false){
 				mouseSpeed=true
-				document.body.style.setProperty('cursor','none','important');
+				fs_sct.style.setProperty('cursor','none','important');
 				vid.controls=false;
 				ptrSpd.style.setProperty('color','black','important');
 				ptrSpd.style.setProperty('background','yellow','important');
 			}else{
 				mouseSpeed=false;
-				document.body.style.setProperty('cursor','','important');
+				fs_sct.style.setProperty('cursor','','important');
 				vid.controls=true;
 				ptrSpd.style.setProperty('color','','important');
 				ptrSpd.style.setProperty('background','','important');
@@ -1160,10 +1159,12 @@ vid.onpointermove=(e)=>{
 	if(mouseSpeed===true){
 		let y=e.offsetY/vid.clientHeight;
 		if(y>=controlsBottom){
-			document.body.style.setProperty('cursor','','important');
+			mouseInY=true;
+			fs_sct.style.setProperty('cursor','','important');
 			vid.controls=true;
 		}else{
-			document.body.style.setProperty('cursor','none','important');
+			mouseInY=false;
+			fs_sct.style.setProperty('cursor','none','important');
 			vid.controls=false;
 		}
 	}
@@ -1177,6 +1178,8 @@ window.onpointermove=(e)=>{
 		vid.playbackRate=s;
 	}
 }
+
+
 
   vid.addEventListener('ratechange', function(){
   
@@ -1282,6 +1285,23 @@ var subti = {
 subti.dom=document.getElementById("txt4");
 
 updFilters();
+
+
+const observerFs = new MutationObserver((mutations) =>
+{
+	if(mouseSpeed===true && mouseInY===false){
+		fs_sct.style.setProperty('cursor','none','important');
+	}
+});
+
+observerFs.observe(fs_sct, {
+			attributeFilter: ["style"],
+			childList: true,
+			subtree: true,
+			attributeOldValue: true
+});
+
+
 
 const observerFilt = new MutationObserver((mutations) =>
 {
