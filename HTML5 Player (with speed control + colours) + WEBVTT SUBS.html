@@ -510,7 +510,7 @@ aside div#clrMtrx {
 	display: grid;
 }
 
-aside div#clrMtrx div {
+aside div#clrMtrx div, #ptrSpdVals div {
     width: 52px;
     -webkit-appearance: textfield;
     background-color: white;
@@ -546,13 +546,7 @@ input::-webkit-slider-thumb {
 section { box-flex:1; padding:20px; background:#333; }
 </style>
 
-  <title>HTML5 local media file player + subs</title>
-
-  
-    
-
-
-
+  <title>HTML5 local media file player + subs + pointer speed</title>
 
 <script type='text/javascript'>
 window.onload=function(){
@@ -621,7 +615,7 @@ fr.readAsText(this.files[0]);
 
 <body>
 
-<h1>HTML5 local media file player</h1>
+<h1>HTML5 local media file player + pointer speed</h1>
 
 
 <input id="selVid" type="file" accept="video/*,audio/*"/>
@@ -676,10 +670,6 @@ h1 {
 
 </style>
 
-
-
-
-
 <button onclick="PlayPause()" type="button" accesskey="b">Play/Pause (b)</button>
 <button onclick="Backwards()" type="button" accesskey="i">Rewind (i)</button>
 <button onclick="Forwards()" type="button" accesskey="o">Fast forward (o)</button>
@@ -690,10 +680,6 @@ h1 {
 <button onclick="setPlaySpeedOne()" type="button" accesskey="1">Reset playback rate</button>
 <button onclick="setPlusNoughtPointOne()" type="button" accesskey="]">+0.1x (])</button>
 <button onclick="setPlaySpeedUp()" type="button">+0.25x</button>
-
- 
-
-
 
 <style>
 
@@ -735,8 +721,14 @@ button#Scl {
 <button onclick="setPlaySpeedSix()" type="button" accesskey="6">6x</button>
 <button onclick="setPlaySpeedSeven()" type="button" accesskey="7">7x</button>
 <button onclick="setPlaySpeedEight()" type="button" accesskey="8">8x</button>
-<br>
-
+<button onclick="setPlaySpeedNine()" type="button" accesskey="9">9x</button><br>
+<section style="padding:0.27ch 0px 1.05ch 0px;" id="ptrSpdVals">
+	<button id="ptrSpd" onclick="togglePointerSpeed()" type="button" accesskey="s">Toggle pointer speed (s)</button>
+	<div oninput="changePtrSpeed()" contenteditable="true" title="Min speed (Cursor on left)" id="minSpd">1</div>
+	<div oninput="changePtrSpeed()" contenteditable="true" title="Mid speed (Cursor in centre)" id="midSpd">3.5</div>
+	<div oninput="changePtrSpeed()" contenteditable="true" title="Mid speed (Cursor on right)" id="maxSpd">10</div>
+	<div oninput="changePtrSpeed()" contenteditable="true" title="If cursor in bottom y%, show controls." id="yControls">95%</div>
+</section>
 <button onclick="subsyncminusfive()" type="button">-5s</button>
 <button onclick="subsyncminusone()" type="button">-1s</button>
 <button onclick="subsyncminusnoughtfive()" type="button">-500ms</button>
@@ -772,8 +764,31 @@ video{
 <br>
 
 	<script>
+let mouseSpeed=false;
+
+function lerp(a,b,t) {
+	return ((1 - (t)) * (a) + (t) * (b) );
+}
+var idlePointerTimer;
+var forcePointerHide = false;
+	
+var minSpd = document.getElementById("minSpd");
+var midSpd = document.getElementById("midSpd");
+var maxSpd = document.getElementById("maxSpd");
+var yControls = document.getElementById("yControls");
+let minSpeed,midSpeed,maxSpeed,controlsBottom;
+
+function changePtrSpeed(){
+	minSpeed=parseFloat(minSpd.innerText);
+	midSpeed=parseFloat(midSpd.innerText);
+	maxSpeed=parseFloat(maxSpd.innerText);
+	controlsBottom=parseFloat(yControls.innerText)*0.01;
+}
+
+ changePtrSpeed();
 var vid = document.getElementById("video");
 var fs_sct = document.getElementById("fullscreen_cntn");
+var ptrSpd = document.getElementById("ptrSpd");
 let hw=(window.screen.availHeight > window.screen.availWidth)? 'max-width:100% !important; width:100% !important; min-width:100% !important;' : 'max-height:100% !important; height:100% !important;min-height:100% !important;';
 let hw0=(window.screen.availHeight > window.screen.availWidth)? 'max-width:90% !important;' : 'max-height:95vh !important';
 let hw_r=(window.screen.availHeight > window.screen.availWidth)? /max-width:\s*100%\s*!important\s*\;\s*width:\s*100%\s*!important\s*\;\s*min-width:\s*100%\s*!important\s*\;/ : /max-height:\s*100%\s*!important\s*\;\s*height:\s*100%\s*!important\s*\;\s*min-height:\s*100%\s*!important\s*\;/;
@@ -1048,6 +1063,11 @@ function setPlaySpeedEight() {
 $("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
 } 
 
+function setPlaySpeedNine() { 
+    vid.playbackRate = 9;
+$("p#vidStat").html("Playback rate: " + vid.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 7}) + ", " + "Subtitles delay: " + s.d + "ms.");
+} 
+
 var pR1=1;
 function swtch() { 
     if (vid.playbackRate!=1) {
@@ -1076,15 +1096,29 @@ fs_sct.onclick=function(event){
 	}
 }
 
+
 fs_sct.onpointerenter=function(){
+	if(mouseSpeed===false){
+		idlePointerTimer=null;
+		forcePointerHide = false;
 
-        var idlePointerTimer;
-        var forcePointerHide = false;
+		$("body").css('cursor', 'none');
+	}
+}
+fs_sct.onwheel = (event) => {
+	event.preventDefault();
+	event.stopPropagation();
 
-        $("body").css('cursor', 'none');
-
+	if(event.deltaY>0){
+	   vid.currentTime -= ((event.deltaY*vid.duration)/(event.deltaY*1001)); // 
+	}
+	if (event.deltaY<0){
+		vid.currentTime -= (event.deltaY/800)
+	}
+}
+	
 fs_sct.onpointermove = (event) => {
-                if(!forcePointerHide) {
+                if(!forcePointerHide && mouseSpeed===false) {
                         $("body").css('cursor', '');
 
                         clearTimeout(idlePointerTimer);
@@ -1100,23 +1134,44 @@ fs_sct.onpointermove = (event) => {
                 }
 }
 
-fs_sct.onwheel = (event) => {
-event.preventDefault();
-event.stopPropagation();
-
-if(event.deltaY>0){
-   vid.currentTime -= ((event.deltaY*vid.duration)/(event.deltaY*1001)); // 
-}
-if (event.deltaY<0){
-	vid.currentTime -= (event.deltaY/800)
-}
-    }
-
-}
-
   fs_sct.onpointerleave=function() {
     $(window).off('scroll');
   };
+  
+  
+  function togglePointerSpeed(){
+			if(vid.readyState>=2 && mouseSpeed===false){
+				mouseSpeed=true
+				document.body.style.setProperty('cursor','none','important');
+				vid.controls=false;
+				ptrSpd.style.setProperty('color','black','important');
+				ptrSpd.style.setProperty('background','yellow','important');
+			}else{
+				mouseSpeed=false;
+				document.body.style.setProperty('cursor','','important');
+				vid.controls=true;
+				ptrSpd.style.setProperty('color','','important');
+				ptrSpd.style.setProperty('background','','important');
+				vid.playbackRate=1;
+			}
+}
+
+window.onpointermove=(e)=>{
+	if(mouseSpeed===true){
+		let x=Math.max(0,Math.min(1,e.screenX/(window.screen.availWidth-1)));
+		let y=Math.max(0,Math.min(1,e.screenY/(window.screen.availHeight-1)));
+		let s=(x>0.5)?lerp(midSpeed,maxSpeed,(x-0.5)*2):lerp(minSpeed,midSpeed,x*2);
+		s=(Math.round(s*100)*0.01); //2 d.p.
+		vid.playbackRate=s;
+		if(y>=controlsBottom	){
+			document.body.style.setProperty('cursor','','important');
+			vid.controls=true;
+		}else{
+			document.body.style.setProperty('cursor','none','important');
+			vid.controls=false;
+		}
+	}
+}
 
   vid.addEventListener('ratechange', function(){
   
