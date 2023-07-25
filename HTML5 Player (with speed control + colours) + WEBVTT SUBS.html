@@ -725,7 +725,7 @@ button#Scl {
 <section style="padding:0.27ch 0px 1.05ch 0px;" id="ptrSpdVals">
 	<button id="ptrSpd" onclick="togglePointerSpeed()" type="button" accesskey="s">Toggle pointer speed (s)</button>
 	<div oninput="changePtrSpeed()" contenteditable="true" title="Min speed (Cursor on left)" id="minSpd">1</div>
-	<div oninput="changePtrSpeed()" contenteditable="true" title="Mid speed (Cursor in centre)" id="midSpd">3.5</div>
+	<div oninput="changePtrSpeed()" contenteditable="true" title="Mid speed (Cursor in centre)" id="midSpd">3.35</div>
 	<div oninput="changePtrSpeed()" contenteditable="true" title="Mid speed (Cursor on right)" id="maxSpd">10</div>
 	<div oninput="changePtrSpeed()" contenteditable="true" title="If cursor in bottom y%, show controls." id="yControls">90%</div>
 </section>
@@ -1092,7 +1092,7 @@ vid.currentTime = vid.currentTime + 1;
 }
 
 fs_sct.onclick=function(event){
-	if(event.button===0 && event.target===fs_sct){
+	if(event.button===0 && (event.target===fs_sct || event.target===vid)){
 		PlayPause();
 	}
 }
