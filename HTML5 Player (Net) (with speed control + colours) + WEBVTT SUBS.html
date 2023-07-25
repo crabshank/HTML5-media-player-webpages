@@ -1148,7 +1148,7 @@ window.onpointermove=(e)=>{
 		let s=(x>0.5)?lerp(midSpeed,maxSpeed,(x-0.5)*2):lerp(minSpeed,midSpeed,x*2);
 		s=(Math.round(s*100)*0.01); //2 d.p.
 		vid.playbackRate=s;
-		if(y>=controlsBottom	){
+		if(y>=controlsBottom){
 			document.body.style.setProperty('cursor','','important');
 			vid.controls=true;
 		}else{
