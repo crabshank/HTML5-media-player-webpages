@@ -2,45 +2,45 @@ Hotkeys:
 
 Alt + :
 
-1
+* 1
 
-2
+* 2
 
-3
+* 3
 
-4
+* 4
 
-5
+* 5
 
-6
+* 6
 
-7
+* 7
 
-8
+* 8
 
-9
+* 9
 
 = for "these numbers"x speed (e.g. Alt+4 for 4x)
 
-\ = Switch between last playback rate and 1x
+* \ = Switch between last playback rate and 1x
 
-square open bracket = -0.1x
+* square open bracket = -0.1x
 
-square close bracket = +0.1x
+* square close bracket = +0.1x
 
-b = Play
+* b = Play
 
-i = Rewind
+* i = Rewind
 
-o = Fast forward
+* o = Fast forward
 
-a = Full screen (Not the internal fullscren of the video itself, but my version which allows speed controllers and other extensions to still be visible) (also 'Alt + Click' is a shortcut for this)
+* a = Full screen (Not the internal fullscren of the video itself, but my version which allows speed controllers and other extensions to still be visible) (also 'Alt + Click' is a shortcut for this)
 
-s = Acivate pointer speed mode. This allows the user to move the (mouse) pointer left to right to adjust the playback rate. To get code you can inject into the console to emulate this in any page, see [here](https://gist.github.com/crabshank/3e166fa24e5ef04b75d8ab9940b94ea6).
+* s = Acivate pointer speed mode. This allows the user to move the (mouse) pointer left to right to adjust the playback rate. To get code you can inject into the console to emulate this in any page, see [here](https://gist.github.com/crabshank/3e166fa24e5ef04b75d8ab9940b94ea6).
 
-, = -10ms subtitle delay
+* , = -10ms subtitle delay
 
-. = +10ms subtitle delay
+* . = +10ms subtitle delay
 
 Also:
 Scrolling on the video seeks backwards and forwards.
