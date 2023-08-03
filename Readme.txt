@@ -21,7 +21,7 @@ b = Play
 i = Rewind
 o = Fast forward
 a = Full screen (Not the internal fullscren of the video itself, but my version which allows speed controllers and other extensions to still be visible) (also 'Alt + Click' is a shortcut for this)
-s = Acivate pointer speed mode. This allows the user to move the (mouse) pointer left to right to adjust the playback rate.
+s = Acivate pointer speed mode. This allows the user to move the (mouse) pointer left to right to adjust the playback rate. To get code you can inject into the console to emulate this in any page, see [here](https://gist.github.com/crabshank/3e166fa24e5ef04b75d8ab9940b94ea6).
 
 , = -10ms subtitle delay
 . = +10ms subtitle delay
