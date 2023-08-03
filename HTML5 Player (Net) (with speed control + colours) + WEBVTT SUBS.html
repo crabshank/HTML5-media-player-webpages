@@ -1097,7 +1097,7 @@ fs_sct.onwheel = (event) => {
 	   vid.currentTime -= ((event.deltaY*vid.duration)/(event.deltaY*1001)); // 
 	}
 	if (event.deltaY<0){
-		vid.currentTime -= (event.deltaY/800)
+		 vid.currentTime += ((event.deltaY*vid.duration)/(event.deltaY*1001)); // 
 	}
 }
 	
